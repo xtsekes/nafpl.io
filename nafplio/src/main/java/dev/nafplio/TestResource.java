@@ -2,12 +2,10 @@ package dev.nafplio;
 
 import io.smallrye.mutiny.Multi;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/test")
+@Path("/chat")
 public class TestResource {
 
     @Inject
@@ -15,8 +13,8 @@ public class TestResource {
 
     @GET
     @Produces(MediaType.SERVER_SENT_EVENTS)
-    public Multi<String> test() {
-        return aiService.chat("hello");
+    public Multi<String> test(@QueryParam("prompt") String prompt) {
+        return aiService.chat(prompt);
     }
 
 

@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: http://localhost:8080/test
+  url: http://localhost:8080/chat?prompt=hello
   body: none
   auth: none
+}
+
+query {
+  prompt: hello
 }
 
 headers {
