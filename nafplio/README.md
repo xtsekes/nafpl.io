@@ -1,4 +1,4 @@
-# nafplio
+# NAFPL.io - Native Application for Processing Language
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
