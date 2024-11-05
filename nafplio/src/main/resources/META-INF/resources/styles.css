@@ -1,0 +1,24 @@
+/* Custom scrollbar styling for better UI */
+#message-container::-webkit-scrollbar {
+    width: 8px;
+}
+#message-container::-webkit-scrollbar-thumb {
+    background-color: #bdbdbd;
+    border-radius: 10px;
+}
+
+/* Resizable side panel */
+#side-panel {
+    min-width: 200px;
+    max-width: 400px;
+    resize: horizontal;
+    overflow: auto;
+}
+
+/* Improved button styling */
+button {
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #3b82f6;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Chat App</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 flex h-screen">
+<!-- Side Panel for Projects -->
+<div id="side-panel" class="bg-white border-r p-4">
+    <h2 class="text-xl font-bold mb-4">Projects</h2>
+    <ul id="project-list" class="space-y-2">
+        <!-- Project items will be dynamically inserted here -->
+    </ul>
+    <button onclick="addProject()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+        Add Project
+    </button>
+</div>
+
+<!-- Main Content Area -->
+<div class="flex-grow flex flex-col">
+    <!-- Message Container -->
+    <div class="flex-grow overflow-y-auto p-4" id="message-container">
+        <!-- Messages will be dynamically inserted here -->
+    </div>
+
+    <!-- Input Area -->
+    <div class="w-full p-4 bg-white border-t">
+        <div class="max-w-2xl mx-auto flex">
+            <input id="user-input" type="text"
+                   placeholder="Type your message..."
+                   class="flex-grow border rounded-l px-4 py-2 focus:outline-none"
+                   onkeydown="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()"
+                    class="bg-blue-500 text-white px-4 py-2 rounded-r">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
