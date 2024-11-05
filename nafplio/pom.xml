@@ -51,14 +51,23 @@
 
         <dependency>
             <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
+            <artifactId>langchain4j-embeddings-bge-small-en-q</artifactId>
             <version>0.35.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.quarkiverse.langchain4j</groupId>
             <artifactId>quarkus-langchain4j-pgvector</artifactId>
-            <version>0.20.3</version> <!-- Check for the latest version -->
+            <version>0.20.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-postgresql</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,8 @@
 services:
   postgres:
-    image: postgres:15.4
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: quarkus_vector_postgres
     user: postgres
     environment:
@@ -11,6 +13,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+      - ./vector_extension.sql:/docker-entrypoint-initdb.d/0-vector_extension.sql
 volumes:
   postgres_data:
