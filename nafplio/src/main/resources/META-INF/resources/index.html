@@ -11,12 +11,12 @@
 <!-- Side Panel for Projects -->
 <div id="side-panel" class="bg-white border-r p-4">
     <h2 class="text-xl font-bold mb-4">Projects</h2>
+    <button id="add-project-btn" onclick="addProject()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+        Add Project
+    </button>
     <ul id="project-list" class="space-y-2">
         <!-- Project items will be dynamically inserted here -->
     </ul>
-    <button onclick="addProject()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
-        Add Project
-    </button>
 </div>
 
 <!-- Main Content Area -->
@@ -32,9 +32,11 @@
             <input id="user-input" type="text"
                    placeholder="Type your message..."
                    class="flex-grow border rounded-l px-4 py-2 focus:outline-none"
-                   onkeydown="if(event.key === 'Enter') sendMessage()">
-            <button onclick="sendMessage()"
-                    class="bg-blue-500 text-white px-4 py-2 rounded-r">
+                   onkeydown="if(event.key === 'Enter') sendMessage()"
+                   disabled>
+            <button id="send-button" onclick="sendMessage()"
+                    class="bg-blue-500 text-white px-4 py-2 rounded-r"
+                    disabled>
                 Send
             </button>
         </div>
