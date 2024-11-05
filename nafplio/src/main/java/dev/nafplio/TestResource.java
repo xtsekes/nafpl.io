@@ -17,5 +17,4 @@ public class TestResource {
         return aiService.chat(prompt);
     }
 
-
 }
