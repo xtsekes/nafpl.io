@@ -2,9 +2,11 @@ package dev.nafplio.service;
 
 import dev.nafplio.data.ProjectEntity;
 import dev.nafplio.data.ProjectEntityRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 
+@ApplicationScoped
 public class ProjectService {
 
     private final ProjectEntityRepository projectEntityRepository;

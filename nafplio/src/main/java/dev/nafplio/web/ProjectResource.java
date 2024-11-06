@@ -4,9 +4,11 @@ import dev.nafplio.service.ProjectService;
 import dev.nafplio.data.ProjectEntity;
 import dev.nafplio.web.model.CreateProjectPayload;
 import dev.nafplio.web.model.ProjectView;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class ProjectResource {
 
     @POST
     @Path("/create-project")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response createProject(CreateProjectPayload createProjectPayload) {
         ProjectEntity projectEntity = new ProjectEntity();
         projectEntity.setRootDirectory(createProjectPayload.rootDirectory());
