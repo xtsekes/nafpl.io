@@ -91,7 +91,7 @@ async function streamResponse(userMessage) {
             if (done) break;
 
             responseText += decoder.decode(value, { stream: true })
-                .replace(/data:/, '').replace(/\n/g, ''); // Extract the response
+                .replaceAll(/data:/g, '').replaceAll(/\n/g, ''); // Extract the response
 
             // Only create the message element for the AI response on the first chunk
             if (!aiMessageElement) {
