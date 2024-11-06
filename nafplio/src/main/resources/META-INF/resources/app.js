@@ -7,6 +7,8 @@ const projectList = document.getElementById("project-list");
 userInput.disabled = true;
 sendButton.disabled = true;
 
+fetchExistingProjects();
+
 // Function to add messages to the DOM
 function addMessage(content, isUser) {
     const message = document.createElement("div");
@@ -21,6 +23,28 @@ function addMessage(content, isUser) {
 function enableChatInput() {
     userInput.disabled = false;
     sendButton.disabled = false;
+}
+
+async function fetchExistingProjects() {
+    try {
+        const endpoint = `/project/get-all`;
+        const response = await fetch(endpoint);
+
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        const projects = await response.json(); // Assuming JSON response with project data
+
+        // Add each project as a list item
+        projects.forEach((project) => {
+            console.log(project);
+            const projectItem = document.createElement("li");
+            projectItem.classList.add("p-2", "bg-gray-100", "rounded", "shadow-sm");
+            projectItem.textContent = project.nickname; // or any relevant property of the project
+            projectList.appendChild(projectItem);
+        });
+    } catch (error) {
+        console.error("Error fetching response:", error);
+    }
 }
 
 function addProject() {
@@ -67,7 +91,7 @@ async function streamResponse(userMessage) {
             if (done) break;
 
             responseText += decoder.decode(value, { stream: true })
-                .replace(/^data:/, '').replace(/\n/g, ''); // Extract the response
+                .replace(/data:/, '').replace(/\n/g, ''); // Extract the response
 
             // Only create the message element for the AI response on the first chunk
             if (!aiMessageElement) {
