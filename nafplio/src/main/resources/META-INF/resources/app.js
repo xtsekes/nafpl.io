@@ -1,11 +1,23 @@
+const sidePanel = document.getElementById("side-panel");
 const messageContainer = document.getElementById("message-container");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 const projectList = document.getElementById("project-list");
 
-// Initial button disabling
 userInput.disabled = true;
 sendButton.disabled = true;
+sidePanel.disabled = true;
+
+fetchExistingProjects();
+
+function setActiveProject(selectedProject) {
+    const activeProject = document.querySelector(".active-project");
+    if (activeProject) {
+        activeProject.classList.remove("active-project");
+    }
+
+    selectedProject.classList.add("active-project");
+}
 
 // Function to add messages to the DOM
 function addMessage(content, isUser) {
@@ -23,16 +35,45 @@ function enableChatInput() {
     sendButton.disabled = false;
 }
 
-function addProject() {
-    // Mock Project List Items
+function enableSidePanel() {
+    sidePanel.disabled = false;
+}
+
+function fetchExistingProjects() {
+    const endpoint = `/project/get-all`;
+
+    fetch(endpoint)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json(); // Parse response as JSON
+        })
+        .then((projects) => {
+            projects.forEach((project) => addProject(project.nickname));
+
+            enableSidePanel();
+        })
+        .catch((error) => {
+            console.error("Error fetching response:", error);
+        });
+}
+
+function addProject(name = `Project ${projectList.childElementCount + 1}`) {
     const projectItem = document.createElement("li");
     projectItem.classList.add("p-2", "bg-gray-100", "rounded", "shadow-sm");
-    projectItem.textContent = `Project ${projectList.childElementCount + 1}`;
+    projectItem.textContent = name;
+
+    projectItem.addEventListener("click", () => {
+        console.log("click!")
+        setActiveProject(projectItem);
+    });
+
     projectList.appendChild(projectItem);
 
-    // Enable chat input and send button after adding a project
     enableChatInput();
 }
+
 
 // Function to send a message
 function sendMessage() {
