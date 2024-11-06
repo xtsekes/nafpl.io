@@ -21,6 +21,8 @@ function setActiveProject(selectedProject) {
     }
 
     selectedProject.classList.add("active-project");
+
+    messageContainer.innerHTML = "";
 }
 
 // Function to add messages to the DOM
@@ -114,7 +116,7 @@ function sendMessage() {
     userInput.value = "";
 
     // Start receiving the response
-    streamResponse('coffee-app', text);
+    streamResponse(selectedProjectNickname, text);
 }
 
 // Function to handle streaming response from the server
