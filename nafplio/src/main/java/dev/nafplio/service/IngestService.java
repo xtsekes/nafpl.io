@@ -6,7 +6,6 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import dev.nafplio.service.model.IngestModel;
-import dev.nafplio.web.model.IngestPayload;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -47,7 +46,6 @@ public class IngestService {
         }
     }
 
-
     private void ingestBatch(List<Document> batch) {
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
                 .embeddingStore(store)
@@ -57,6 +55,4 @@ public class IngestService {
 
         ingestor.ingest(batch);
     }
-
-
 }
