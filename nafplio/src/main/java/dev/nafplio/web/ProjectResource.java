@@ -1,7 +1,7 @@
 package dev.nafplio.web;
 
-import dev.nafplio.service.ProjectService;
 import dev.nafplio.data.ProjectEntity;
+import dev.nafplio.service.ProjectService;
 import dev.nafplio.web.model.CreateProjectPayload;
 import dev.nafplio.web.model.ProjectView;
 import jakarta.ws.rs.Consumes;
