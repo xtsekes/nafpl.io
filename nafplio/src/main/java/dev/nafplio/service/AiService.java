@@ -1,4 +1,4 @@
-package dev.nafplio;
+package dev.nafplio.service;
 
 import io.quarkiverse.langchain4j.RegisterAiService;
 import io.smallrye.mutiny.Multi;
