@@ -21,6 +21,7 @@ function setActiveProject(selectedProject) {
     }
 
     selectedProject.classList.add("active-project");
+    selectedProjectNickname = selectedProject.textContent;
 
     messageContainer.innerHTML = "";
 }
@@ -65,25 +66,25 @@ function fetchExistingProjects() {
         });
 }
 
-function fetchProjectById(projectNickname) {
-    const endpoint = `/project/get-project/${projectNickname}`;
-
-    fetch(endpoint)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then((project) => {
-            selectedProjectNickname = project.nickname;
-            console.log(project);
-            console.log(selectedProjectNickname);
-        })
-        .catch((error) => {
-            console.error("Error fetching response:", error);
-        });
-}
+// function fetchProjectById(projectNickname) {
+//     const endpoint = `/project/get-project/${projectNickname}`;
+//
+//     fetch(endpoint)
+//         .then((response) => {
+//             if (!response.ok) {
+//                 throw new Error("Network response was not ok");
+//             }
+//             return response.json();
+//         })
+//         .then((project) => {
+//             selectedProjectNickname = project.nickname;
+//             console.log(project);
+//             console.log(selectedProjectNickname);
+//         })
+//         .catch((error) => {
+//             console.error("Error fetching response:", error);
+//         });
+// }
 
 function addProject(name, manualAdd) {
     const projectItem = document.createElement("li");
@@ -92,7 +93,7 @@ function addProject(name, manualAdd) {
 
     projectItem.addEventListener("click", () => {
         setActiveProject(projectItem);
-        fetchProjectById(projectItem.textContent);
+        // fetchProjectById(projectItem.textContent);
     });
 
     projectList.appendChild(projectItem);
