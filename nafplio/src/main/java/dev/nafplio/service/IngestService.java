@@ -8,19 +8,12 @@ import dev.nafplio.service.model.IngestModel;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import static dev.langchain4j.data.document.splitter.DocumentSplitters.recursive;
 
 @ApplicationScoped
 public class IngestService {
-
-    private static final int BATCH_SIZE = 100;
-
     private final PgVectorEmbeddingStore store;
     private final EmbeddingModel embedding;
-    private final ExecutorService executor = Executors.newFixedThreadPool(4);
 
     public IngestService(PgVectorEmbeddingStore store, EmbeddingModel embedding) {
         this.store = store;
@@ -32,12 +25,12 @@ public class IngestService {
 
         Log.info("Starting ingestion of document");
 
-        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+        EmbeddingStoreIngestor.builder()
                 .embeddingStore(store)
                 .embeddingModel(embedding)
-                .documentSplitter(recursive(500, 50))
-                .build();
-        ingestor.ingest(documents);
+                .documentSplitter(recursive(2000, 200))
+                .build()
+                .ingest(documents);
 
         Log.info("Finished ingesting all document");
     }

@@ -18,7 +18,7 @@ public class Retriever implements Supplier<RetrievalAugmentor> {
         EmbeddingStoreContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingModel(model)
                 .embeddingStore(store)
-                .maxResults(2)
+                .maxResults(5)
                 .build();
         augmentor = DefaultRetrievalAugmentor
                 .builder()

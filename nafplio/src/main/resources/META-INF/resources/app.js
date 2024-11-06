@@ -101,7 +101,7 @@ function addProject(name, manualAdd) {
 
     if (manualAdd) {
         setActiveProject(projectItem);
-        projectItem.scrollIntoView({ behavior: "smooth", block: "center" });
+        projectItem.scrollIntoView({behavior: "smooth", block: "center"});
     }
 }
 
@@ -135,21 +135,21 @@ async function streamResponse(nickname, userMessage) {
 
         // Read the response stream
         while (true) {
-            const { done, value } = await reader.read();
+            const {done, value} = await reader.read();
             if (done) break;
 
-            let decodedText = decoder.decode(value, { stream: true });
+            let decodedText = decoder.decode(value, {stream: true});
 
             const matches = decodedText.matchAll(/^data:(.*)$/gm);
 
             while (true) {
                 const match = matches.next();
 
-                if(match.done) {
+                if (match.done) {
                     break;
                 }
 
-                responseText +=  match.value[1];
+                responseText += match.value[1];
             }
 
             if (!aiMessageElement) {
@@ -222,3 +222,16 @@ function submitProject() {
         });
 }
 
+document.getElementById("project-path").addEventListener('change', (e) => {
+
+    e.stopPropagation();
+    e.preventDefault();
+
+    const nicknameElement = document.getElementById("project-nickname");
+    const pathElement = document.getElementById("project-path");
+
+    if (nicknameElement.value === "") {
+        nicknameElement.value = pathElement.value.split("/").pop();
+    }
+
+});
