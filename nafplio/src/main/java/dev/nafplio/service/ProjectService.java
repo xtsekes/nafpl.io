@@ -29,4 +29,7 @@ public class ProjectService {
         return projectEntityRepository.findById(id);
     }
 
+    public ProjectEntity getProjectByNickname(String nickname) {
+        return projectEntityRepository.findByNickname(nickname);
+    }
 }
