@@ -15,8 +15,13 @@
     overflow: auto;
 }
 
+#project-list {
+    margin: 4px 8px;
+}
+
 /* Improved button styling */
 button {
+    margin: 4px 8px;
     transition: background-color 0.3s ease;
 }
 button:hover {
@@ -27,4 +32,10 @@ button:disabled, input:disabled {
     background-color: #d3d3d3;
     cursor: not-allowed;
     opacity: 0.5;
+}
+
+.active-project {
+    background-color: rgb(59 130 246);
+    color: white;
+    font-weight: bold;
 }
