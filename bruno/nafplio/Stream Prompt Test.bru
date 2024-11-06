@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: http://localhost:8080/chat?prompt=hello
+  url: http://localhost:8080/chat?nickname=coffee-app&prompt=what does this project do?
   body: none
   auth: none
 }
 
-query {
-  prompt: hello
+params:query {
+  nickname: coffee-app
+  prompt: what does this project do?
 }
 
 headers {

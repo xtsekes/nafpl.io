@@ -17,8 +17,7 @@ public class ChatResource {
 
     @GET
     @Produces(MediaType.SERVER_SENT_EVENTS)
-    public Multi<String> test(@QueryParam("prompt") String prompt) {
-        return aiService.chat(prompt);
+    public Multi<String> test(@QueryParam("nickname") String nickname, @QueryParam("prompt") String prompt) {
+        return aiService.chat(nickname, prompt);
     }
-
 }

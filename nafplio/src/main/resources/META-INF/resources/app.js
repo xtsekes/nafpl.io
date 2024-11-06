@@ -114,16 +114,16 @@ function sendMessage() {
     userInput.value = "";
 
     // Start receiving the response
-    streamResponse(text);
+    streamResponse('coffee-app', text);
 }
 
 // Function to handle streaming response from the server
-async function streamResponse(userMessage) {
+async function streamResponse(nickname, userMessage) {
     let responseText = ""; // To store the full response as chunks arrive
     let aiMessageElement = null; // Placeholder for the message element to update
 
     try {
-        const endpoint = `/chat?prompt=${encodeURIComponent(userMessage)}`;
+        const endpoint = `/chat?nickname=${nickname}&prompt=${encodeURIComponent(userMessage)}`;
         const response = await fetch(endpoint);
 
         if (!response.ok) throw new Error("Network response was not ok");
