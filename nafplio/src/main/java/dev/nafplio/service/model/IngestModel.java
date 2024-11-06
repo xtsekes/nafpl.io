@@ -1,23 +1,14 @@
 package dev.nafplio.service.model;
 
 public class IngestModel {
-    private String rootDirectory;
-
-    private String nickname;
-
-    public String getRootDirectory() {
-        return rootDirectory;
+    public String getOutputDirectory() {
+        return outputDirectory;
     }
 
-    public void setRootDirectory(String rootDirectory) {
-        this.rootDirectory = rootDirectory;
+    public void setOutputDirectory(String outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
-    public String getNickname() {
-        return nickname;
-    }
+    private String outputDirectory;
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
 }
