@@ -102,7 +102,6 @@ function addProject(name, manualAdd) {
     if (manualAdd) {
         setActiveProject(projectItem);
         projectItem.scrollIntoView({ behavior: "smooth", block: "center" });
-        enableChatInput();
     }
 }
 
