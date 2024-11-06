@@ -1,7 +1,7 @@
-/* Custom scrollbar styling for better UI */
 #message-container::-webkit-scrollbar {
     width: 8px;
 }
+
 #message-container::-webkit-scrollbar-thumb {
     background-color: #bdbdbd;
     border-radius: 10px;
@@ -21,4 +21,10 @@ button {
 }
 button:hover {
     background-color: #3b82f6;
+}
+
+button:disabled, input:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
