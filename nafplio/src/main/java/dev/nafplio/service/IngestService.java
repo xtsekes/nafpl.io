@@ -6,6 +6,7 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import dev.nafplio.service.model.IngestModel;
+import dev.nafplio.web.model.IngestPayload;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -32,27 +33,16 @@ public class IngestService {
     }
 
     public void startIngestion(IngestModel payload) {
-        Path dir = Path.of(payload.getRootDirectory());
-        List<Document> documents = FileSystemDocumentLoader.loadDocumentsRecursively(dir);
-        Log.info("Starting ingestion of " + documents.size() + " documents");
+        Path dir = Path.of(payload.getOutputDirectory());
+        Document document = FileSystemDocumentLoader.loadDocument(dir);
 
-        for (int i = 0; i < documents.size(); i += BATCH_SIZE) {
-            int fromIndex = i;
-            int toIndex = Math.min(i + BATCH_SIZE, documents.size());
-            List<Document> batch = documents.subList(fromIndex, toIndex);
-
-            CompletableFuture.runAsync(() -> ingestBatch(batch), executor)
-                    .thenRun(() -> Log.info("Finished ingesting batch from index " + fromIndex + " to " + toIndex));
-        }
-    }
-
-    private void ingestBatch(List<Document> batch) {
+        Log.info("Starting ingestion of document");
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
                 .embeddingStore(store)
                 .embeddingModel(embedding)
-                .documentSplitter(recursive(Integer.MAX_VALUE, 0))
+                .documentSplitter(recursive(500, 50))
                 .build();
-
-        ingestor.ingest(batch);
+        ingestor.ingest(document);
+        Log.info("Finished ingesting all document");
     }
 }

@@ -11,12 +11,29 @@
 <!-- Side Panel for Projects -->
 <div id="side-panel" class="bg-white border-r p-4">
     <h2 class="text-xl font-bold mb-4">Projects</h2>
-    <button id="add-project-btn" onclick="addProject()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+    <button id="add-project-btn" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
         Add Project
     </button>
     <ul id="project-list" class="space-y-2">
         <!-- Project items will be dynamically inserted here -->
     </ul>
+    <div id="add-project-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
+            <h3 class="text-xl font-bold mb-4">Add New Project</h3>
+            <label class="block mb-2">
+                Nickname:
+                <input id="project-nickname" type="text" class="w-full border rounded px-2 py-1" placeholder="Enter project nickname">
+            </label>
+            <label class="block mb-4">
+                Directory Path:
+                <input id="project-path" type="text" class="w-full border rounded px-2 py-1" placeholder="Enter directory path">
+            </label>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeAddProjectModal()" class="bg-gray-300 text-black px-4 py-2 rounded">Cancel</button>
+                <button onclick="submitProject()" class="bg-blue-500 text-white px-4 py-2 rounded">Add Project</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Main Content Area -->

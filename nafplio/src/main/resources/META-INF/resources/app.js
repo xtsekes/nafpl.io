@@ -4,6 +4,8 @@ const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 const projectList = document.getElementById("project-list");
 
+document.getElementById("add-project-btn").addEventListener("click", openAddProjectModal);
+
 userInput.disabled = true;
 sendButton.disabled = true;
 sidePanel.disabled = true;
@@ -19,6 +21,8 @@ function setActiveProject(selectedProject) {
     }
 
     selectedProject.classList.add("active-project");
+
+    messageContainer.innerHTML = "";
 }
 
 // Function to add messages to the DOM
@@ -52,7 +56,7 @@ function fetchExistingProjects() {
             return response.json();
         })
         .then((projects) => {
-            projects.forEach((project) => addProject(project.nickname));
+            projects.forEach((project) => addProject(project.nickname, false));
 
             enableSidePanel();
         })
@@ -81,7 +85,7 @@ function fetchProjectById(projectNickname) {
         });
 }
 
-function addProject(name = `Project ${projectList.childElementCount + 1}`) {
+function addProject(name, manualAdd) {
     const projectItem = document.createElement("li");
     projectItem.classList.add("p-2", "bg-gray-100", "rounded", "shadow-sm");
     projectItem.textContent = name;
@@ -92,6 +96,11 @@ function addProject(name = `Project ${projectList.childElementCount + 1}`) {
     });
 
     projectList.appendChild(projectItem);
+
+    if (manualAdd) {
+        setActiveProject(projectItem);
+        projectItem.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
 
     enableChatInput();
 }
@@ -104,10 +113,10 @@ function sendMessage() {
 
     messageContainer.appendChild(addMessage(text, true));
     messageContainer.scrollTop = messageContainer.scrollHeight;
-    userInput.value = "";   // Clear input
+    userInput.value = "";
 
     // Start receiving the response
-    streamResponse('coffee-app', text);
+    streamResponse(selectedProjectNickname, text);
 }
 
 // Function to handle streaming response from the server
@@ -143,10 +152,6 @@ async function streamResponse(nickname, userMessage) {
                 responseText +=  match.value[1];
             }
 
-            // responseText += decodedText
-            //     .replaceAll(/data:/g, '').replaceAll(/\n/g, ''); // Extract the response
-
-            // Only create the message element for the AI response on the first chunk
             if (!aiMessageElement) {
                 aiMessageElement = messageContainer.appendChild(addMessage(responseText, false)); // Create and add to DOM
                 messageContainer.scrollTop = messageContainer.scrollHeight;
@@ -161,3 +166,59 @@ async function streamResponse(nickname, userMessage) {
         addMessage("Error fetching response. Please try again.", false);
     }
 }
+
+function openAddProjectModal() {
+    document.getElementById("add-project-modal").classList.add("active");
+}
+
+function closeAddProjectModal() {
+    document.getElementById("add-project-modal").classList.remove("active");
+    clearModalInputs();
+}
+
+function clearModalInputs() {
+    document.getElementById("project-nickname").value = "";
+    document.getElementById("project-path").value = "";
+}
+
+function submitProject() {
+    const endpoint = `/project/create-project`;
+    const nickname = document.getElementById("project-nickname").value.trim();
+    const path = document.getElementById("project-path").value.trim();
+
+    if (!nickname || !path) {
+        alert("Please enter both a nickname and directory path.");
+        return;
+    }
+
+    const data = {
+        nickname: nickname,
+        rootDirectory: path
+    };
+
+    fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (response.status !== 201) {
+                throw new Error(`Failed to add project: Received status ${response.status}`);
+            }
+
+            return response.text().then(text => {
+                return text ? JSON.parse(text) : {};
+            });
+        })
+        .then(() => {
+            addProject(data.nickname, true);
+            closeAddProjectModal();
+        })
+        .catch(error => {
+            console.error("Error adding project:", error);
+            alert("Failed to add project. Please try again.");
+        });
+}
+
