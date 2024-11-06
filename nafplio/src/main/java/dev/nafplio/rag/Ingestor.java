@@ -35,32 +35,4 @@ public class Ingestor {
         this.embedding = embedding;
     }
 
-    @PostConstruct
-    public void startIngestion() {
-        Path dir = Path.of("/Users/arndzk/Projects/coffee-app/coffee-app-api");
-        List<Document> documents = FileSystemDocumentLoader.loadDocumentsRecursively(dir);
-        Log.info("Starting ingestion of " + documents.size() + " documents");
-
-        // Split documents into batches for parallel processing
-        for (int i = 0; i < documents.size(); i += BATCH_SIZE) {
-            int fromIndex = i;
-            int toIndex = Math.min(i + BATCH_SIZE, documents.size());
-            List<Document> batch = documents.subList(fromIndex, toIndex);
-
-            // Ingest each batch asynchronously
-            CompletableFuture.runAsync(() -> ingestBatch(batch), executor)
-                    .thenRun(() -> Log.info("Finished ingesting batch from index " + fromIndex + " to " + toIndex));
-        }
-    }
-
-    private void ingestBatch(List<Document> batch) {
-        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-                .embeddingStore(store)
-                .embeddingModel(embedding)
-                .documentSplitter(recursive(Integer.MAX_VALUE, 0))
-                .build();
-
-        ingestor.ingest(batch);
-    }
-
 }
