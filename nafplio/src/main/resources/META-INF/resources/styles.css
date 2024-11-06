@@ -35,7 +35,7 @@ button:disabled, input:disabled {
 }
 
 .active-project {
-    background-color: rgb(59 130 246);
+    background-color: #0B62F3;
     color: white;
     font-weight: bold;
 }

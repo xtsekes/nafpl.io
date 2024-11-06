@@ -24,6 +24,7 @@ function setActiveProject(selectedProject) {
     selectedProjectNickname = selectedProject.textContent;
 
     messageContainer.innerHTML = "";
+    enableChatInput();
 }
 
 // Function to add messages to the DOM
@@ -101,9 +102,8 @@ function addProject(name, manualAdd) {
     if (manualAdd) {
         setActiveProject(projectItem);
         projectItem.scrollIntoView({ behavior: "smooth", block: "center" });
+        enableChatInput();
     }
-
-    enableChatInput();
 }
 
 
