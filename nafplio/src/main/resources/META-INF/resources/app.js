@@ -8,6 +8,8 @@ userInput.disabled = true;
 sendButton.disabled = true;
 sidePanel.disabled = true;
 
+let selectedProjectNickname = null;
+
 fetchExistingProjects();
 
 function setActiveProject(selectedProject) {
@@ -47,12 +49,32 @@ function fetchExistingProjects() {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            return response.json(); // Parse response as JSON
+            return response.json();
         })
         .then((projects) => {
             projects.forEach((project) => addProject(project.nickname));
 
             enableSidePanel();
+        })
+        .catch((error) => {
+            console.error("Error fetching response:", error);
+        });
+}
+
+function fetchProjectById(projectNickname) {
+    const endpoint = `/project/get-project/${projectNickname}`;
+
+    fetch(endpoint)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((project) => {
+            selectedProjectNickname = project.nickname;
+            console.log(project);
+            console.log(selectedProjectNickname);
         })
         .catch((error) => {
             console.error("Error fetching response:", error);
@@ -65,8 +87,8 @@ function addProject(name = `Project ${projectList.childElementCount + 1}`) {
     projectItem.textContent = name;
 
     projectItem.addEventListener("click", () => {
-        console.log("click!")
         setActiveProject(projectItem);
+        fetchProjectById(projectItem.textContent);
     });
 
     projectList.appendChild(projectItem);

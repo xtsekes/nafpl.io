@@ -52,12 +52,19 @@ public class ProjectResource {
         return toProjectView(projectService.getProjectById(id));
     }
 
+    @GET
+    @Path("/get-project/{nickname}")
+    public ProjectView getProjectByNickname(String nickname) {
+        return toProjectView(projectService.getProjectByNickname(nickname));
+    }
+
 
     private ProjectView toProjectView(ProjectEntity projectEntity) {
         return new ProjectView(
+                projectEntity.getId(),
                 projectEntity.getRootDirectory(),
                 projectEntity.getNickname()
         );
     }
-
 }
+
