@@ -22,6 +22,7 @@ public class ProjectResource {
     }
 
     @GET
+    @Path("/get-all")
     public List<ProjectView> getAllProjects() {
         return projectService.getAllProjects()
                 .stream()
@@ -30,6 +31,7 @@ public class ProjectResource {
     }
 
     @POST
+    @Path("/create-project")
     public Response createProject(CreateProjectPayload createProjectPayload) {
         ProjectEntity projectEntity = new ProjectEntity();
         projectEntity.setRootDirectory(createProjectPayload.rootDirectory());
@@ -40,6 +42,13 @@ public class ProjectResource {
 
         return Response.status(Response.Status.CREATED).build();
     }
+
+    @GET
+    @Path("/get-project/{id}")
+    public ProjectView getProjectById(Long id) {
+        return toProjectView(projectService.getProjectById(id));
+    }
+
 
     private ProjectView toProjectView(ProjectEntity projectEntity) {
         return new ProjectView(
