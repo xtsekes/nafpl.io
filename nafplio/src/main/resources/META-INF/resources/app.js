@@ -66,8 +66,22 @@ async function streamResponse(userMessage) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            responseText += decoder.decode(value, { stream: true })
-                .replaceAll(/data:/g, '').replaceAll(/\n/g, ''); // Extract the response
+            let decodedText = decoder.decode(value, { stream: true });
+
+            const matches = decodedText.matchAll(/^data:(.*)$/gm);
+
+            while (true) {
+                const match = matches.next();
+
+                if(match.done) {
+                    break;
+                }
+
+                responseText +=  match.value[1];
+            }
+
+            // responseText += decodedText
+            //     .replaceAll(/data:/g, '').replaceAll(/\n/g, ''); // Extract the response
 
             // Only create the message element for the AI response on the first chunk
             if (!aiMessageElement) {
