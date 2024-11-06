@@ -1,5 +1,11 @@
 const messageContainer = document.getElementById("message-container");
 const userInput = document.getElementById("user-input");
+const sendButton = document.getElementById("send-button");
+const projectList = document.getElementById("project-list");
+
+// Initial button disabling
+userInput.disabled = true;
+sendButton.disabled = true;
 
 // Function to add messages to the DOM
 function addMessage(content, isUser) {
@@ -10,7 +16,22 @@ function addMessage(content, isUser) {
     message.innerText = content;
 
     return message;
+}
 
+function enableChatInput() {
+    userInput.disabled = false;
+    sendButton.disabled = false;
+}
+
+function addProject() {
+    // Mock Project List Items
+    const projectItem = document.createElement("li");
+    projectItem.classList.add("p-2", "bg-gray-100", "rounded", "shadow-sm");
+    projectItem.textContent = `Project ${projectList.childElementCount + 1}`;
+    projectList.appendChild(projectItem);
+
+    // Enable chat input and send button after adding a project
+    enableChatInput();
 }
 
 // Function to send a message
@@ -18,9 +39,8 @@ function sendMessage() {
     const text = userInput.value.trim();
     if (!text) return;
 
-    //addMessage(text, true); // Display user's message
     messageContainer.appendChild(addMessage(text, true));
-    messageContainer.scrollTop = messageContainer.scrollHeight; // Auto-scroll to the bottom
+    messageContainer.scrollTop = messageContainer.scrollHeight;
     userInput.value = "";   // Clear input
 
     // Start receiving the response

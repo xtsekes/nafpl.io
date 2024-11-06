@@ -3,6 +3,7 @@ package dev.nafplio.service;
 import dev.nafplio.data.ProjectEntity;
 import dev.nafplio.data.ProjectEntityRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class ProjectService {
         this.projectEntityRepository = projectEntityRepository;
     }
 
+    @Transactional
     public void createProject(ProjectEntity projectEntity) {
         projectEntityRepository.persist(projectEntity);
     }
