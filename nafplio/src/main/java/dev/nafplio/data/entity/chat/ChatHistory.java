@@ -1,4 +1,4 @@
-package dev.nafplio.data.entity;
+package dev.nafplio.data.entity.chat;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
@@ -10,11 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chat_history")
+@Getter
+@Setter
 public class ChatHistory extends PanacheEntityBase {
 
     @Id
@@ -28,7 +32,6 @@ public class ChatHistory extends PanacheEntityBase {
     @Column(nullable = false)
     private String prompt;
 
-    @Column(nullable = false)
     private String response;
 
     @Column(nullable = false)
