@@ -73,7 +73,10 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        let name = $("#name");
+        const chatWrapper = $("#chat");
+        const name = $("#name");
+        const messageWrapper = $("#msg");
+        const sendWrapper = $("#send");
 
         let connection = undefined;
 
@@ -81,27 +84,29 @@
             connection = new TheExperts.websockets.Connection({
                 endpoint: `ws://${location.host}/websocket/${name.val()}`,
                 onopen: function (connection) {
-                    $("#send").attr("disabled", false);
+                    sendWrapper.attr("disabled", false);
                     $("#connect").attr("disabled", true);
                     name.attr("disabled", true);
-                    $("#msg").focus();
+                    messageWrapper.focus();
                 },
                 onmessage: function (connection, data) {
                     const response = JSON.parse(data);
 
-                    let chat = $("#chat");
-
                     switch (response.type) {
                         case "INIT":
-                            chat.append(`<div class='message'>
+                            chatWrapper.append(`<div class='message'>
                             <span class='user'>bot:</span>
                             <span style="white-space: pre-line" class="data"></span>
                         </div>`);
+                            messageWrapper.attr("disabled", true);
+                            sendWrapper.attr("disabled", true);
                             break;
                         case "END":
+                            messageWrapper.attr("disabled", false);
+                            sendWrapper.attr("disabled", false);
                             break;
                         case "DATA":
-                            let lastMessage = $(".message:last .data", chat);
+                            let lastMessage = $(".message:last .data", chatWrapper);
 
                             lastMessage.append(response.data);
                             break;
@@ -119,29 +124,40 @@
                 return;
             }
 
-            let msg = $("#msg");
+            const message = messageWrapper.val();
 
-            connection.send(msg.val());
+            connection.send(message);
 
-            msg.val("");
+            messageWrapper.val("");
+
+            chatWrapper.append(`<div class='message'>
+                            <span class='user'>you:</span>
+                            <span style="white-space: pre-line" class="data">${message}</span>
+                        </div>`);
         }
 
         $("#connect").click(connect);
-        $("#send").click(send);
+        sendWrapper.click(send);
 
         name.keypress(function (event) {
-            if (event.keyCode == 13 || event.which == 13) {
+            if (event.keyCode === 13 || event.which === 13) {
+                event.preventDefault();
+                event.stopPropagation();
+
                 connect();
             }
         });
 
-        $("#msg").keypress(function (event) {
-            if (event.keyCode == 13 || event.which == 13) {
+        messageWrapper.keypress(function (event) {
+            if (event.keyCode === 13 || event.which === 13) {
+                event.preventDefault();
+                event.stopPropagation();
+
                 send();
             }
         });
 
-        $("#chat").change(function () {
+        chatWrapper.change(function () {
             scrollToBottom();
         });
 
