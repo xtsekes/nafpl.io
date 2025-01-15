@@ -8,17 +8,15 @@ import io.quarkus.websockets.next.OnTextMessage;
 import io.quarkus.websockets.next.WebSocket;
 import io.quarkus.websockets.next.WebSocketConnection;
 import io.smallrye.mutiny.Multi;
-import jakarta.inject.Inject;
 
 @WebSocket(path = "/websocket/{nickname}")
 public class WebSocketChatBotResource {
     private final SessionScopedAiService bot;
+    private final WebSocketConnection connection;
 
-    @Inject
-    WebSocketConnection connection;
-
-    public WebSocketChatBotResource(SessionScopedAiService bot) {
+    public WebSocketChatBotResource(SessionScopedAiService bot, WebSocketConnection connection) {
         this.bot = bot;
+        this.connection = connection;
     }
 
     @OnOpen
