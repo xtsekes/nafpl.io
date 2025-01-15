@@ -8,9 +8,13 @@ import io.quarkus.websockets.next.OnTextMessage;
 import io.quarkus.websockets.next.WebSocket;
 import io.quarkus.websockets.next.WebSocketConnection;
 import io.smallrye.mutiny.Multi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebSocket(path = "/websocket/{nickname}")
 public class WebSocketChatBotResource {
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketChatBotResource.class);
+
     private final SessionScopedAiService bot;
     private final WebSocketConnection connection;
 
@@ -38,6 +42,11 @@ public class WebSocketChatBotResource {
                 Multi.createFrom().item(new ChatResponse(ChatResponseType.INIT, "")),
                 actualResponseStream,
                 Multi.createFrom().item(new ChatResponse(ChatResponseType.END, ""))
-        );
+                )
+                .onFailure().recoverWithItem(throwable -> {
+                    logger.error("An error occurred.", throwable);
+                    
+                    return new ChatResponse(ChatResponseType.ERROR, "An error occurred.");
+                });
     }
 }
