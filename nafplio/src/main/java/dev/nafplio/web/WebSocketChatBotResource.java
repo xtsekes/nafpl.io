@@ -37,7 +37,7 @@ public class WebSocketChatBotResource {
         return createMultiResponse(response);
     }
 
-    private Multi<ChatResponse> createMultiResponse(Multi<ChatResponse> actualResponseStream) {
+    private static Multi<ChatResponse> createMultiResponse(Multi<ChatResponse> actualResponseStream) {
         return Multi.createBy().concatenating().streams(
                 Multi.createFrom().item(new ChatResponse(ChatResponseType.INIT, "")),
                 actualResponseStream,
