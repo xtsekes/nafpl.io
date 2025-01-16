@@ -56,7 +56,7 @@
         <br/>
     </div>
     <div class="row">
-        <div style="height: 600px; max-height: 600px;" class="col-md-12" id="chat" style="overflow-y: scroll;"></div>
+        <div style="height: 600px; max-height: 600px; overflow-y: scroll;" class="col-md-12" id="chat"></div>
     </div>
     <div class="row">
         <input class="col-md-6" id="msg" type="text" placeholder="enter your message">
@@ -112,9 +112,12 @@
                             </div>`);
 
                             console.error(response.data);
+
+                            messageWrapper.attr("disabled", false);
+                            sendWrapper.attr("disabled", false);
                             break;
                         case "DATA":
-                            let lastMessage = $(".message:last .data", chatWrapper);
+                            const lastMessage = $(".message:last .data", chatWrapper);
 
                             lastMessage.append(response.data);
                             break;
