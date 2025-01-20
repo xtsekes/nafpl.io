@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quarkus Chat!</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+    <style>
+        #chat {
+            resize: none;
+            overflow: hidden;
+            min-height: 300px;
+            max-height: 300px;
+            border: 1px solid darkslategray;
+            margin-bottom: 1em;
+            padding: 1em;
+        }
+
+        .message {
+
+        }
+
+        .system-message {
+            font-weight: bold;
+        }
+
+        .user {
+            font-weight: bold;
+            color: cornflowerblue;
+        }
+
+        .system-user {
+            font-weight: bold;
+            color: deeppink;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-default navbar-pf" role="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+            <p><strong>>> Quarkus Chat!</strong></p>
+        </a>
+    </div>
+</nav>
+<div class="container">
+    <br/>
+    <div class="row">
+        <input id="name" class="col-md-4" type="text" placeholder="your name" value="coffee-app-api">
+        <button id="connect" class="col-md-1 btn btn-primary" type="button">connect</button>
+        <br/>
+        <br/>
+    </div>
+    <div class="row">
+        <div style="height: 600px; max-height: 600px; overflow-y: scroll;" class="col-md-12" id="chat"></div>
+    </div>
+    <div class="row">
+        <input class="col-md-6" id="msg" type="text" placeholder="enter your message">
+        <button class="col-md-1 btn btn-primary" id="send" type="button" disabled>send</button>
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/js/patternfly.min.js"></script>
+
+<script src="sockets.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        const chatWrapper = $("#chat");
+        const name = $("#name");
+        const messageWrapper = $("#msg");
+        const sendWrapper = $("#send");
+
+        let connection = undefined;
+
+        const connect = function (){
+            connection = new TheExperts.websockets.Connection({
+                endpoint: `ws://${location.host}/websocket/${name.val()}`,
+                onopen: function (connection) {
+                    sendWrapper.attr("disabled", false);
+                    $("#connect").attr("disabled", true);
+                    name.attr("disabled", true);
+                    messageWrapper.focus();
+                },
+                onmessage: function (connection, data) {
+                    const response = JSON.parse(data);
+
+                    switch (response.type) {
+                        case "INIT":
+                            chatWrapper.append(`<div class='message'>
+                            <span class='user'>bot:</span>
+                            <span style="white-space: pre-line" class="data"></span>
+                        </div>`);
+                            messageWrapper.attr("disabled", true);
+                            sendWrapper.attr("disabled", true);
+                            break;
+                        case "END":
+                            messageWrapper.attr("disabled", false);
+                            sendWrapper.attr("disabled", false);
+                            break;
+                        case "ERROR":
+
+                            chatWrapper.append(`<div class='message'>
+                                <span style="white-space: pre-line" class="data">${response.data}</span>
+                            </div>`);
+
+                            console.error(response.data);
+
+                            messageWrapper.attr("disabled", false);
+                            sendWrapper.attr("disabled", false);
+                            break;
+                        case "DATA":
+                            const lastMessage = $(".message:last .data", chatWrapper);
+
+                            lastMessage.append(response.data);
+                            break;
+                    }
+
+                    scrollToBottom();
+                }
+            });
+
+            connection.connect();
+        }
+
+        const send = function() {
+            if (connection.status !== TheExperts.websockets.Status.connected) { // if not connected
+                return;
+            }
+
+            const message = messageWrapper.val();
+
+            connection.send(message);
+
+            messageWrapper.val("");
+
+            chatWrapper.append(`<div class='message'>
+                            <span class='user'>you:</span>
+                            <span style="white-space: pre-line" class="data">${message}</span>
+                        </div>`);
+        }
+
+        $("#connect").click(connect);
+        sendWrapper.click(send);
+
+        name.keypress(function (event) {
+            if (event.keyCode === 13 || event.which === 13) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                connect();
+            }
+        });
+
+        messageWrapper.keypress(function (event) {
+            if (event.keyCode === 13 || event.which === 13) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                send();
+            }
+        });
+
+        chatWrapper.change(function () {
+            scrollToBottom();
+        });
+
+        name.focus();
+    });
+
+    let scrollToBottom = function () {
+        let chat = $('#chat');
+        chat.scrollTop(chat[0].scrollHeight);
+    };
+
+</script>
+</body>
+
+</html>

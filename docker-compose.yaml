@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: quarkus_vector_postgres
+    restart: unless-stopped
     user: postgres
     environment:
       POSTGRES_USER: sa
