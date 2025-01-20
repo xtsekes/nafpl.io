@@ -2,11 +2,11 @@ package dev.nafplio.service;
 
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
-import dev.nafplio.rag.Retriever;
+import dev.nafplio.rag.RetrieverFactory;
 import io.quarkiverse.langchain4j.RegisterAiService;
 import io.smallrye.mutiny.Multi;
 
-@RegisterAiService(retrievalAugmentor = Retriever.class)
+@RegisterAiService(retrievalAugmentor = RetrieverFactory.class)
 public interface AiService {
     @SystemMessage("""
             You are a professional software consultant.

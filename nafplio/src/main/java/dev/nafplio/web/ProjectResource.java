@@ -152,7 +152,7 @@ public class ProjectResource {
 
         scanProject(inputDirectory, outputDirectory);
 
-        ingestService.startIngestion(IngestModel.of(outputDirectory));
+        ingestService.startIngestion(IngestModel.of(nickname, outputDirectory));
     }
 
     private static void scanProject(java.nio.file.Path inputDirectory, java.nio.file.Path outputDirectory) throws IOException {
