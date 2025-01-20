@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 @RequestScoped
-final class RetrieverFactory implements Supplier<RetrievalAugmentor> {
+public final class RetrieverFactory implements Supplier<RetrievalAugmentor> {
     private final ChatIdProvider chatIdProvider;
     private final EmbeddingStore<TextSegment> store;
     private final EmbeddingModel model;
