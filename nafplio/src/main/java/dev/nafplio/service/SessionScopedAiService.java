@@ -16,9 +16,5 @@ public interface SessionScopedAiService {
                 You make software audits for clients.
                 Try to answer briefly and precisely, unless asked for details.
             """)
-    @UserMessage("""
-            Return results that correspond explicitly to the project with the nickname {nickname} and to the given prompt.
-            {prompt}
-            """)
-    Multi<String> chat(@MemoryId String nickname, String prompt);
+    Multi<String> chat(@MemoryId String chatId, @UserMessage String prompt);
 }

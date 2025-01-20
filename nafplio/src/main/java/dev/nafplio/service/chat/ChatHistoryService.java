@@ -1,35 +1,33 @@
 package dev.nafplio.service.chat;
 
 import dev.nafplio.data.entity.chat.ChatHistory;
-import dev.nafplio.data.entity.chat.ChatSession;
 import dev.nafplio.data.repository.ChatHistoryRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.UUID;
 
 @ApplicationScoped
 public class ChatHistoryService {
-
     private final ChatHistoryRepository chatHistoryRepository;
 
     public ChatHistoryService(ChatHistoryRepository chatHistoryRepository) {
         this.chatHistoryRepository = chatHistoryRepository;
     }
 
-    public List<ChatHistory> getChatHistoryBySessionId(UUID sessionId) {
-        return chatHistoryRepository.findBySessionId(sessionId);
+    public List<ChatHistory> getChatHistory(String chatId) {
+        return chatHistoryRepository.findByChatId(chatId);
     }
 
     @Transactional
-    public ChatHistory savePrompt(ChatSession chatSession, String prompt) {
-        ChatHistory chatHistory = new ChatHistory();
-        chatHistory.setChatsession(chatSession);
+    public ChatHistory savePrompt(String chatId, String prompt, String response) {
+        var chatHistory = new ChatHistory();
+        chatHistory.setChatId(chatId);
         chatHistory.setPrompt(prompt);
-        chatHistory.setResponse(null);
-        chatHistory.setTimestamp(LocalDateTime.now());
+        chatHistory.setResponse(response);
+        chatHistory.setTimestamp(LocalDateTime.now(ZoneOffset.UTC));
         chatHistoryRepository.persist(chatHistory);
 
         return chatHistory;
@@ -37,7 +35,7 @@ public class ChatHistoryService {
 
     @Transactional
     public void updateResponse(Long historyId, String response) {
-        ChatHistory chatHistory = chatHistoryRepository.findById(historyId);
+        var chatHistory = chatHistoryRepository.findById(historyId);
         if (chatHistory == null) {
             throw new IllegalArgumentException("Chat history record not found");
         }

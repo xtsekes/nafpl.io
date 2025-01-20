@@ -1,57 +1,91 @@
 package dev.nafplio.service.chat;
 
-import dev.nafplio.data.entity.chat.ChatSession;
-import dev.nafplio.data.repository.ChatSessionRepository;
-import dev.nafplio.service.AiService;
+import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import dev.nafplio.service.SessionScopedAiService;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-@ApplicationScoped
-public class PromptService {
+@RequestScoped
+public final class PromptService {
+    private static final Logger logger = LoggerFactory.getLogger(PromptService.class);
 
-    private final AiService aiService;
+    private final SessionScopedAiService aiService;
     private final ChatHistoryService chatHistoryService;
-    private final ChatSessionRepository chatSessionRepository;
+    private final ChatMemoryStore chatMemoryStore;
 
-    Logger log = LoggerFactory.getLogger(PromptService.class);
+    public PromptService(SessionScopedAiService aiService, ChatHistoryService chatHistoryService, ChatMemoryStore chatMemoryStore) {
+        Objects.requireNonNull(aiService);
+        Objects.requireNonNull(chatHistoryService);
 
-    public PromptService(AiService aiService, ChatHistoryService chatHistoryService) {
         this.aiService = aiService;
         this.chatHistoryService = chatHistoryService;
-        this.chatSessionRepository = new ChatSessionRepository();
+        this.chatMemoryStore = chatMemoryStore;
     }
 
-    public Multi<String> processPrompt(String nickname, String prompt, UUID sessionId) {
-        // Perform blocking database operations in a worker thread
-        return Uni.createFrom().item(() -> {
-                    ChatSession chatSession = chatSessionRepository.findById(sessionId);
-                    if (chatSession == null) {
-                        throw new IllegalArgumentException("Chat session not found for sessionId: " + sessionId);
-                    }
-                    return chatSession;
-                })
-                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                .toMulti()
-                .flatMap(chatSession -> {
-                    Long historyId = chatHistoryService.savePrompt(chatSession, prompt).getId();
+    public Multi<String> chat(String chatId, String prompt) {
+        try {
+            Uni.createFrom().item(createSupplier(chatMemoryStore, chatHistoryService, chatId))
+                    .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+                    .subscribe().asCompletionStage().get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
-                    return aiService.chat(nickname, prompt)
-                            .onItem().invoke(chunk -> {
-                                log.info(chunk);
-                                Uni.createFrom().item(() -> {
-                                            chatHistoryService.updateResponse(historyId, chunk);
-                                            return null;
-                                        })
-                                        .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                                        .subscribe().asCompletionStage();
-                            });
+        var builder = new StringBuilder();
+
+        return aiService.chat(chatId, prompt)
+                .onItem().invoke(builder::append)
+                .onFailure().invoke(failure -> {
+                    logger.error("An Error occurred!", failure);
+
+                    Uni.createFrom().item(() -> {
+                                chatHistoryService.savePrompt(chatId, prompt, "An Error occurred!");
+
+                                return null;
+                            })
+                            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+                            .subscribe().asCompletionStage();
+                })
+                .onCompletion().invoke(() -> {
+                    logger.debug("Response: {}", builder);
+
+                    // Save in a single operation
+                    Uni.createFrom().item(() -> {
+                                chatHistoryService.savePrompt(chatId, prompt, builder.toString()).getId();
+
+                                return null;
+                            })
+                            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+                            .subscribe().asCompletionStage();
                 });
     }
 
+    private static Supplier<Object> createSupplier(ChatMemoryStore chatMemoryStore, ChatHistoryService chatHistoryService, String chatId) {
+        return () -> {
+            var memoryStoreMessages = chatMemoryStore.getMessages(chatId);
+            if (memoryStoreMessages.isEmpty()) {
+
+                memoryStoreMessages = chatHistoryService.getChatHistory(chatId)
+                        .stream().flatMap(history ->
+                                Stream.of(
+                                        dev.langchain4j.data.message.UserMessage.from(history.getPrompt()),
+                                        dev.langchain4j.data.message.AiMessage.from(history.getResponse())
+                                ))
+                        .toList();
+
+                chatMemoryStore.updateMessages(chatId, memoryStoreMessages);
+            }
+
+            return "";
+        };
+    }
 }

@@ -20,20 +20,18 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ChatHistory extends PanacheEntityBase {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_id", nullable = false)
-    private ChatSession chatsession;
+    private String chatId;
 
     @Column(nullable = false)
     private String prompt;
 
+    @Column(columnDefinition = "TEXT")
     private String response;
 
     @Column(nullable = false)
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private LocalDateTime timestamp;
 }

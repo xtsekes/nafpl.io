@@ -18,7 +18,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ChatSession extends PanacheEntityBase {
-
     @Id
     @GeneratedValue
     private UUID id;
