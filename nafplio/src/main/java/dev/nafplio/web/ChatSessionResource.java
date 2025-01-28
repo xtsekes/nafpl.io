@@ -1,6 +1,6 @@
 package dev.nafplio.web;
 
-import dev.nafplio.service.chat.ChatSessionDto;
+import dev.nafplio.data.entity.chat.ChatSession;
 import dev.nafplio.service.chat.ChatSessionService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -21,7 +21,7 @@ public class ChatSessionResource {
 
     @GET
     @Path("/get-all-chat-sessions")
-    public List<ChatSessionDto> getChatSessions() {
+    public List<ChatSession> getChatSessions() {
         return chatSessionService.getSessionsSorted();
     }
 

@@ -19,29 +19,24 @@ public class ChatSessionService {
         this.chatSessionRepository = chatSessionRepository;
     }
 
-    public List<ChatSessionDto> getSessions() {
-        return chatSessionRepository.findAll()
-                .list()
-                .stream()
-                .map(ChatSessionService::map)
-                .toList();
+    public List<ChatSession> getSessions() {
+        return chatSessionRepository
+                .findAll()
+                .list();
     }
 
-    public List<ChatSessionDto> getSessionsSorted() {
+    public List<ChatSession> getSessionsSorted() {
         return chatSessionRepository
                 .findAll(Sort.by("updatedAt").descending())
-                .list()
-                .stream()
-                .map(ChatSessionService::map)
-                .toList();
+                .list();
     }
 
-    public ChatSessionDto getSession(String id) {
-        return map(chatSessionRepository.findById(id));
+    public ChatSession getSession(String id) {
+        return chatSessionRepository.findById(id);
     }
 
     @Transactional
-    public ChatSessionDto createSession(String title) {
+    public ChatSession createSession(String title) {
         var chatSession = new ChatSession();
         chatSession.setId(UUID.randomUUID().toString());
         chatSession.setTitle(title != null ? title : "Untitled Chat");
@@ -49,21 +44,10 @@ public class ChatSessionService {
         chatSession.setUpdatedAt(LocalDateTime.now(ZoneOffset.UTC));
         chatSessionRepository.persist(chatSession);
 
-        return map(chatSession);
+        return chatSession;
     }
 
     public void deleteSession(String id) {
         chatSessionRepository.deleteById(id);
-    }
-
-    private static ChatSessionDto map(ChatSession chatSession) {
-        var chatSessionDto = new ChatSessionDto();
-
-        chatSessionDto.setId(chatSession.getId());
-        chatSessionDto.setTitle(chatSession.getTitle());
-        chatSessionDto.setCreatedAt(chatSession.getCreatedAt());
-        chatSessionDto.setUpdatedAt(chatSession.getUpdatedAt());
-
-        return chatSessionDto;
     }
 }

@@ -17,15 +17,12 @@ public class ChatHistoryService {
         this.chatHistoryRepository = chatHistoryRepository;
     }
 
-    public List<ChatHistoryDto> getChatHistory(String chatId) {
-        return chatHistoryRepository.findByChatId(chatId)
-                .stream()
-                .map(ChatHistoryService::map)
-                .toList();
+    public List<ChatHistory> getChatHistory(String chatId) {
+        return chatHistoryRepository.findByChatId(chatId);
     }
 
     @Transactional
-    public ChatHistoryDto savePrompt(String chatId, String prompt, String response) {
+    public ChatHistory savePrompt(String chatId, String prompt, String response) {
         var chatHistory = new ChatHistory();
         chatHistory.setChatId(chatId);
         chatHistory.setPrompt(prompt);
@@ -33,18 +30,6 @@ public class ChatHistoryService {
         chatHistory.setTimestamp(LocalDateTime.now(ZoneOffset.UTC));
         chatHistoryRepository.persist(chatHistory);
 
-        return map(chatHistory);
-    }
-
-    private static ChatHistoryDto map(ChatHistory chatHistory) {
-        var chatHistoryDto = new ChatHistoryDto();
-
-        chatHistoryDto.setId(chatHistory.getId());
-        chatHistoryDto.setChatId(chatHistory.getChatId());
-        chatHistoryDto.setPrompt(chatHistory.getPrompt());
-        chatHistoryDto.setResponse(chatHistory.getResponse());
-        chatHistoryDto.setTimestamp(chatHistory.getTimestamp());
-
-        return chatHistoryDto;
+        return chatHistory;
     }
 }

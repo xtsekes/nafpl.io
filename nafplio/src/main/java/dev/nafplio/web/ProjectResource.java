@@ -1,6 +1,6 @@
 package dev.nafplio.web;
 
-import dev.nafplio.data.ProjectEntity;
+import dev.nafplio.data.entity.ProjectEntity;
 import dev.nafplio.directoryscanner.project.ProjectScanner;
 import dev.nafplio.service.IngestService;
 import dev.nafplio.service.ProjectService;

@@ -1,6 +1,5 @@
 package dev.nafplio.data.entity.chat;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import java.time.ZoneOffset;
 @Table(name = "chats")
 @Getter
 @Setter
-public class ChatSession extends PanacheEntityBase {
+public class ChatSession {
     @Id
     private String id;
 
