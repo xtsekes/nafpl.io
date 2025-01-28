@@ -36,7 +36,6 @@ public class ChatSessionService {
                 .toList();
     }
 
-    @Transactional
     public ChatSessionDto getSession(String id) {
         return map(chatSessionRepository.findById(id));
     }
