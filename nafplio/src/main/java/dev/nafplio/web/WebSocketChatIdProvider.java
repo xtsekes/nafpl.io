@@ -14,6 +14,6 @@ public final class WebSocketChatIdProvider implements ChatIdProvider {
 
     @Override
     public String Resolve() {
-        return connection.pathParam("nickname");
+        return connection.pathParam(WebSocketChatBotResource.CHAT_ID_PARAM);
     }
 }

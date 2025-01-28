@@ -17,12 +17,15 @@ public class ChatHistoryService {
         this.chatHistoryRepository = chatHistoryRepository;
     }
 
-    public List<ChatHistory> getChatHistory(String chatId) {
-        return chatHistoryRepository.findByChatId(chatId);
+    public List<ChatHistoryDto> getChatHistory(String chatId) {
+        return chatHistoryRepository.findByChatId(chatId)
+                .stream()
+                .map(ChatHistoryService::map)
+                .toList();
     }
 
     @Transactional
-    public ChatHistory savePrompt(String chatId, String prompt, String response) {
+    public ChatHistoryDto savePrompt(String chatId, String prompt, String response) {
         var chatHistory = new ChatHistory();
         chatHistory.setChatId(chatId);
         chatHistory.setPrompt(prompt);
@@ -30,16 +33,18 @@ public class ChatHistoryService {
         chatHistory.setTimestamp(LocalDateTime.now(ZoneOffset.UTC));
         chatHistoryRepository.persist(chatHistory);
 
-        return chatHistory;
+        return map(chatHistory);
     }
 
-    @Transactional
-    public void updateResponse(Long historyId, String response) {
-        var chatHistory = chatHistoryRepository.findById(historyId);
-        if (chatHistory == null) {
-            throw new IllegalArgumentException("Chat history record not found");
-        }
-        chatHistory.setResponse(response);
-        chatHistoryRepository.persist(chatHistory);
+    private static ChatHistoryDto map(ChatHistory chatHistory) {
+        var chatHistoryDto = new ChatHistoryDto();
+
+        chatHistoryDto.setId(chatHistory.getId());
+        chatHistoryDto.setChatId(chatHistory.getChatId());
+        chatHistoryDto.setPrompt(chatHistory.getPrompt());
+        chatHistoryDto.setResponse(chatHistory.getResponse());
+        chatHistoryDto.setTimestamp(chatHistory.getTimestamp());
+
+        return chatHistoryDto;
     }
 }

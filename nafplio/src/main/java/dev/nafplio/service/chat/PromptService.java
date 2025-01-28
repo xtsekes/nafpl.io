@@ -1,16 +1,14 @@
 package dev.nafplio.service.chat;
 
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import dev.nafplio.Unis;
 import dev.nafplio.service.SessionScopedAiService;
 import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
 import jakarta.enterprise.context.RequestScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -32,13 +30,7 @@ public final class PromptService {
     }
 
     public Multi<String> chat(String chatId, String prompt) {
-        try {
-            Uni.createFrom().item(createSupplier(chatMemoryStore, chatHistoryService, chatId))
-                    .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                    .subscribe().asCompletionStage().get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        Unis.run(createSupplier(chatMemoryStore, chatHistoryService, chatId));
 
         var builder = new StringBuilder();
 
@@ -47,25 +39,14 @@ public final class PromptService {
                 .onFailure().invoke(failure -> {
                     logger.error("An Error occurred!", failure);
 
-                    Uni.createFrom().item(() -> {
-                                chatHistoryService.savePrompt(chatId, prompt, "An Error occurred!");
-
-                                return null;
-                            })
-                            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                            .subscribe().asCompletionStage();
+                    // Save in a single operation
+                    Unis.run(() -> chatHistoryService.savePrompt(chatId, prompt, "An Error occurred!"));
                 })
                 .onCompletion().invoke(() -> {
                     logger.debug("Response: {}", builder);
 
                     // Save in a single operation
-                    Uni.createFrom().item(() -> {
-                                chatHistoryService.savePrompt(chatId, prompt, builder.toString()).getId();
-
-                                return null;
-                            })
-                            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                            .subscribe().asCompletionStage();
+                    Unis.run(() -> chatHistoryService.savePrompt(chatId, prompt, builder.toString()));
                 });
     }
 
@@ -85,7 +66,7 @@ public final class PromptService {
                 chatMemoryStore.updateMessages(chatId, memoryStoreMessages);
             }
 
-            return "";
+            return null;
         };
     }
 }

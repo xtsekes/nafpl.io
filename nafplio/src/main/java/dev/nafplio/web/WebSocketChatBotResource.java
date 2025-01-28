@@ -11,9 +11,11 @@ import io.smallrye.mutiny.Multi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebSocket(path = "/websocket/{nickname}")
+@WebSocket(path = "/websocket/{" + WebSocketChatBotResource.CHAT_ID_PARAM + "}")
 public class WebSocketChatBotResource {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketChatBotResource.class);
+
+    public static final String CHAT_ID_PARAM = "chatId";
 
     private final PromptService promptService;
     private final ChatIdProvider chatIdProvider;
