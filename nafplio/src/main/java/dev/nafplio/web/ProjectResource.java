@@ -8,10 +8,7 @@ import dev.nafplio.service.model.IngestModel;
 import dev.nafplio.web.model.CreateProjectPayload;
 import dev.nafplio.web.model.ProjectView;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -102,7 +99,7 @@ public class ProjectResource {
 
         var entity = projectService.getProjectByNickname(createProjectPayload.nickname());
 
-        if (entity != null) {
+        if (entity.isPresent()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -124,7 +121,7 @@ public class ProjectResource {
 
     @GET
     @Path("/get-project/{id}")
-    public Response getProjectById(Long id) {
+    public Response getProjectById(@PathParam("id") Long id) {
         var project = projectService.getProjectById(id);
 
         return project.isPresent()
@@ -134,7 +131,7 @@ public class ProjectResource {
 
     @GET
     @Path("/get-project/{nickname}")
-    public Response getProjectByNickname(String nickname) {
+    public Response getProjectByNickname(@PathParam("nickname") String nickname) {
         var project = projectService.getProjectByNickname(nickname);
 
         return project.isPresent()
@@ -157,7 +154,7 @@ public class ProjectResource {
     private static void ingestProject(IngestService ingestService, java.nio.file.Path inputDirectory, String nickname) throws IOException {
         Objects.requireNonNull(nickname);
 
-        java.nio.file.Path outputDirectory = null;
+        java.nio.file.Path outputDirectory;
 
         outputDirectory = resolveOutputDirectory(nickname);
 
