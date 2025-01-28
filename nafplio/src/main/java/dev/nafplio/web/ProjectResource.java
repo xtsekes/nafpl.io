@@ -124,18 +124,29 @@ public class ProjectResource {
 
     @GET
     @Path("/get-project/{id}")
-    public ProjectView getProjectById(Long id) {
-        return toProjectView(projectService.getProjectById(id));
+    public Response getProjectById(Long id) {
+        var project = projectService.getProjectById(id);
+
+        return project.isPresent()
+            ? Response.status(Response.Status.OK).entity(toProjectView(project.get())).build()
+            : Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @GET
     @Path("/get-project/{nickname}")
-    public ProjectView getProjectByNickname(String nickname) {
-        return toProjectView(projectService.getProjectByNickname(nickname));
+    public Response getProjectByNickname(String nickname) {
+        var project = projectService.getProjectByNickname(nickname);
+
+        return project.isPresent()
+                ? Response.status(Response.Status.OK).entity(toProjectView(project.get())).build()
+                : Response.status(Response.Status.NOT_FOUND).build();
     }
 
-
     private ProjectView toProjectView(ProjectEntity projectEntity) {
+        if (projectEntity == null) {
+            return null;
+        }
+
         return new ProjectView(
                 projectEntity.getId(),
                 projectEntity.getRootDirectory(),

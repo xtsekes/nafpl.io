@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ProjectService {
@@ -24,11 +25,11 @@ public class ProjectService {
         return projectEntityRepository.listAll();
     }
 
-    public ProjectEntity getProjectById(Long id) {
-        return projectEntityRepository.findById(id);
+    public Optional<ProjectEntity> getProjectById(Long id) {
+        return projectEntityRepository.findByIdOptional(id);
     }
 
-    public ProjectEntity getProjectByNickname(String nickname) {
+    public Optional<ProjectEntity> getProjectByNickname(String nickname) {
         return projectEntityRepository.findByNickname(nickname);
     }
 }
