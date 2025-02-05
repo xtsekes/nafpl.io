@@ -1,4 +1,4 @@
-package dev.nafplio.data.entity.chat;
+package dev.nafplio.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

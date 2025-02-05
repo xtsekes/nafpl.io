@@ -55,7 +55,7 @@ public final class PromptService {
             var memoryStoreMessages = chatMemoryStore.getMessages(chatId);
             if (memoryStoreMessages.isEmpty()) {
 
-                memoryStoreMessages = chatHistoryService.getChatHistory(chatId)
+                memoryStoreMessages = chatHistoryService.getHistory(chatId)
                         .stream().flatMap(history ->
                                 Stream.of(
                                         dev.langchain4j.data.message.UserMessage.from(history.getPrompt()),
