@@ -1,7 +1,8 @@
 package dev.nafplio.service.chat;
 
-import dev.nafplio.data.entity.chat.ChatHistory;
+import dev.nafplio.data.entity.ChatHistory;
 import dev.nafplio.data.repository.ChatHistoryRepository;
+import dev.nafplio.service.model.PageResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
@@ -17,8 +18,18 @@ public class ChatHistoryService {
         this.chatHistoryRepository = chatHistoryRepository;
     }
 
-    public List<ChatHistory> getChatHistory(String chatId) {
+    public List<ChatHistory> getHistory(String chatId) {
         return chatHistoryRepository.findByChatId(chatId);
+    }
+
+    public PageResult<List<ChatHistory>> getRecentHistory(String chatId, int skip, int take) {
+        if (skip < 0 || take <= 0) {
+            throw new IllegalArgumentException("Skip must be non-negative and take must be positive");
+        }
+
+        var result = chatHistoryRepository.findRecentByChatId(chatId, skip, take);
+
+        return PageResult.of(skip / take, take, result.getItem1(), result.getItem2());
     }
 
     @Transactional
