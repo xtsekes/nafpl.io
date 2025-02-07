@@ -1,4 +1,4 @@
-package dev.nafplio.directoryscanner.gitignore;
+package dev.nafplio.projectScanner.gitignore;
 
 import java.io.IOException;
 import java.nio.file.Path;

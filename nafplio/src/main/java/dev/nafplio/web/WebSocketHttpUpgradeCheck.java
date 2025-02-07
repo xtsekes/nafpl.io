@@ -1,7 +1,7 @@
 package dev.nafplio.web;
 
 import dev.nafplio.Unis;
-import dev.nafplio.service.ProjectService;
+import dev.nafplio.service.ChatService;
 import io.quarkus.arc.Arc;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.runtime.util.StringUtil;
@@ -46,7 +46,7 @@ public class WebSocketHttpUpgradeCheck implements HttpUpgradeCheck {
         }
 
         return Unis.run(() -> QuarkusTransaction.joiningExisting().call(() -> {
-            return Arc.container().instance(ProjectService.class).get().getProjectByNickname(chatId) != null;
+            return Arc.container().instance(ChatService.class).get().get(chatId) != null;
         }));
     }
 }

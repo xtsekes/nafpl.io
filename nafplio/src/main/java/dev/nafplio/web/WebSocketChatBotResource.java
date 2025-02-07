@@ -1,6 +1,6 @@
 package dev.nafplio.web;
 
-import dev.nafplio.service.chat.PromptService;
+import dev.nafplio.service.PromptService;
 import dev.nafplio.useCases.ChatIdProvider;
 import dev.nafplio.web.model.ChatResponse;
 import dev.nafplio.web.model.ChatResponseType;

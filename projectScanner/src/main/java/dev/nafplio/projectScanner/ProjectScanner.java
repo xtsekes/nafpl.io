@@ -1,8 +1,7 @@
-package dev.nafplio.directoryscanner.project;
+package dev.nafplio.projectScanner;
 
-
-import dev.nafplio.directoryscanner.gitignore.GitIgnoreAccessList;
-import dev.nafplio.directoryscanner.gitignore.GitIgnoreAccessListNode;
+import dev.nafplio.projectScanner.gitignore.GitIgnoreAccessList;
+import dev.nafplio.projectScanner.gitignore.GitIgnoreAccessListNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class ProjectScanner {
+public final class ProjectScanner {
     private static final Logger logger = LoggerFactory.getLogger(ProjectScanner.class);
 
     private ProjectScanner() {

@@ -1,4 +1,4 @@
-package dev.nafplio.service.chat;
+package dev.nafplio.service;
 
 import dev.nafplio.data.entity.ChatHistory;
 import dev.nafplio.data.repository.ChatHistoryRepository;

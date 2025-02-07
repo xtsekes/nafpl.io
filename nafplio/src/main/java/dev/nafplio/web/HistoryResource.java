@@ -1,7 +1,7 @@
 package dev.nafplio.web;
 
 import dev.nafplio.data.entity.ChatHistory;
-import dev.nafplio.service.chat.ChatHistoryService;
+import dev.nafplio.service.ChatHistoryService;
 import dev.nafplio.service.model.PageResult;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

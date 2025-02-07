@@ -1,8 +1,7 @@
-package dev.nafplio.service.chat;
+package dev.nafplio.service;
 
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.nafplio.Unis;
-import dev.nafplio.service.SessionScopedAiService;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.RequestScoped;
 import org.slf4j.Logger;

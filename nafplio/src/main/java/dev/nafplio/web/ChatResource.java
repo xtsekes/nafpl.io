@@ -1,9 +1,9 @@
 package dev.nafplio.web;
 
-import dev.nafplio.data.entity.ProjectEntity;
-import dev.nafplio.directoryscanner.project.ProjectScanner;
+import dev.nafplio.data.entity.Chat;
+import dev.nafplio.projectScanner.ProjectScanner;
 import dev.nafplio.service.IngestService;
-import dev.nafplio.service.ProjectService;
+import dev.nafplio.service.ChatService;
 import dev.nafplio.service.model.IngestModel;
 import dev.nafplio.web.model.CreateProjectPayload;
 import dev.nafplio.web.model.ProjectView;
@@ -20,8 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@Path("/project")
-public class ProjectResource {
+@Path("/chats")
+public class ChatResource {
     private static final String DEFAULT_EXCLUDES = """
             .git/
             .gitignore
@@ -62,29 +62,43 @@ public class ProjectResource {
             **/package-lock.json
             """;
 
-    private final ProjectService projectService;
+    private final ChatService chatService;
 
     @Inject
     IngestService ingestService;
 
-    public ProjectResource(ProjectService projectService) {
-        this.projectService = projectService;
+    public ChatResource(ChatService chatService) {
+        this.chatService = chatService;
     }
 
     @GET
-    @Path("/get-all")
-    public List<ProjectView> getAllProjects() {
-        return projectService.getAllProjects()
+    @Path("/")
+    public List<ProjectView> list() {
+        return chatService.get()
                 .stream()
                 .map(this::toProjectView)
                 .toList();
     }
 
+    @GET
+    @Path("/{id}")
+    public Response get(@PathParam("id") String id) {
+        if (id == null || id.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        var project = chatService.get(id);
+
+        return project.isPresent()
+                ? Response.status(Response.Status.OK).entity(toProjectView(project.get())).build()
+                : Response.status(Response.Status.NOT_FOUND).build();
+    }
+
     @POST
-    @Path("/create-project")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createProject(CreateProjectPayload createProjectPayload) {
-        if (createProjectPayload.nickname() == null || createProjectPayload.rootDirectory() == null
+    public Response create(CreateProjectPayload createProjectPayload) {
+        if (createProjectPayload.title() == null || createProjectPayload.rootDirectory() == null
         ) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -97,70 +111,50 @@ public class ProjectResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        var entity = projectService.getProjectByNickname(createProjectPayload.nickname());
+        var entity = chatService.get(createProjectPayload.title());
 
         if (entity.isPresent()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        var projectEntity = new ProjectEntity();
+        var projectEntity = new Chat();
         projectEntity.setRootDirectory(createProjectPayload.rootDirectory());
-        projectEntity.setNickname(createProjectPayload.nickname());
+        projectEntity.setTitle(createProjectPayload.title());
         projectEntity.setCreatedAt(LocalDateTime.now());
 
         try {
-            ingestProject(ingestService, inputDirectory, createProjectPayload.nickname());
+            ingestProject(ingestService, inputDirectory, createProjectPayload.title());
 
-            projectService.createProject(projectEntity);
+            var result = chatService.createProject(projectEntity);
+
+            return Response.status(Response.Status.CREATED).entity(result).build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return Response.status(Response.Status.CREATED).build();
     }
 
-    @GET
-    @Path("/get-project/{id}")
-    public Response getProjectById(@PathParam("id") Long id) {
-        var project = projectService.getProjectById(id);
-
-        return project.isPresent()
-            ? Response.status(Response.Status.OK).entity(toProjectView(project.get())).build()
-            : Response.status(Response.Status.NOT_FOUND).build();
-    }
-
-    @GET
-    @Path("/get-project/{nickname}")
-    public Response getProjectByNickname(@PathParam("nickname") String nickname) {
-        var project = projectService.getProjectByNickname(nickname);
-
-        return project.isPresent()
-                ? Response.status(Response.Status.OK).entity(toProjectView(project.get())).build()
-                : Response.status(Response.Status.NOT_FOUND).build();
-    }
-
-    private ProjectView toProjectView(ProjectEntity projectEntity) {
-        if (projectEntity == null) {
+    private ProjectView toProjectView(Chat chat) {
+        if (chat == null) {
             return null;
         }
 
         return new ProjectView(
-                projectEntity.getId(),
-                projectEntity.getRootDirectory(),
-                projectEntity.getNickname()
+                chat.getId(),
+                chat.getRootDirectory(),
+                chat.getTitle()
         );
     }
 
-    private static void ingestProject(IngestService ingestService, java.nio.file.Path inputDirectory, String nickname) throws IOException {
-        Objects.requireNonNull(nickname);
+    private static void ingestProject(IngestService ingestService, java.nio.file.Path inputDirectory, String title) throws IOException {
+        Objects.requireNonNull(title);
 
         java.nio.file.Path outputDirectory;
 
-        outputDirectory = resolveOutputDirectory(nickname);
+        outputDirectory = resolveOutputDirectory(title);
 
         scanProject(inputDirectory, outputDirectory);
 
-        ingestService.startIngestion(IngestModel.of(nickname, outputDirectory));
+        ingestService.startIngestion(IngestModel.of(title, outputDirectory));
     }
 
     private static void scanProject(java.nio.file.Path inputDirectory, java.nio.file.Path outputDirectory) throws IOException {
@@ -173,10 +167,10 @@ public class ProjectResource {
         }
     }
 
-    private static java.nio.file.Path resolveOutputDirectory(String nickname) throws IOException {
+    private static java.nio.file.Path resolveOutputDirectory(String title) throws IOException {
         var currentDirectory = Paths.get(System.getProperty("user.dir")).getParent().toAbsolutePath().normalize();
 
-        var outputDirectory = currentDirectory.resolve("documents").resolve(nickname);
+        var outputDirectory = currentDirectory.resolve("documents").resolve(title);
 
         if (!Files.exists(outputDirectory)) {
             Files.createDirectory(outputDirectory);
@@ -185,4 +179,3 @@ public class ProjectResource {
         return outputDirectory;
     }
 }
-

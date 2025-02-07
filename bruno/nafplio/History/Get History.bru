@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/chats/history/coffee-app-api
+  url: {{baseUrl}}/chats/history/:chatId
   body: none
   auth: none
+}
+
+params:path {
+  chatId: coffee-app-api
 }
