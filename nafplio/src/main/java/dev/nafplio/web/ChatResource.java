@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,7 +121,7 @@ public class ChatResource {
         var projectEntity = new Chat();
         projectEntity.setRootDirectory(createProjectPayload.rootDirectory());
         projectEntity.setTitle(createProjectPayload.title());
-        projectEntity.setCreatedAt(LocalDateTime.now());
+        projectEntity.setCreatedAt(LocalDateTime.now(ZoneOffset.UTC));
 
         try {
             ingestProject(ingestService, inputDirectory, createProjectPayload.title());
