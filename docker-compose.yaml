@@ -4,11 +4,13 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: quarkus_vector_postgres
+    restart: unless-stopped
     user: postgres
     environment:
       POSTGRES_USER: sa
       POSTGRES_PASSWORD: password
       POSTGRES_DB: vctordb
+      LC_ALL: C
     ports:
       - "5432:5432"
     volumes:

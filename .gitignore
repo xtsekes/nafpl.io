@@ -1,3 +1,6 @@
+#Maven
+target/
+
 # Compiled class file
 *.class
 
@@ -25,3 +28,4 @@ replay_pid*
 
 .idea/
 node_modules/
+**/codebase.txt

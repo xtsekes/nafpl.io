@@ -1,0 +1,22 @@
+meta {
+  name: Create chat
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/chats/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "rootDirectory": "/home/pkonstantellos/git/coffee-app/coffee-app-api",
+    "title": "coffee-app-api"
+  }
+}

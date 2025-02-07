@@ -1,8 +1,8 @@
 package dev.nafplio.web.model;
 
 public record ProjectView(
-        long id,
+        String id,
         String rootDirectory,
-        String nickname
+        String title
 ) {
 }

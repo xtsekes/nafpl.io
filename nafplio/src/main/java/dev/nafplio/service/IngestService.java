@@ -28,6 +28,11 @@ public class IngestService {
         EmbeddingStoreIngestor.builder()
                 .embeddingStore(store)
                 .embeddingModel(embedding)
+                .documentTransformer(document -> {
+                    document.metadata().put("chatId", payload.chatId());
+
+                    return document;
+                })
                 .documentSplitter(recursive(2000, 200))
                 .build()
                 .ingest(documents);
