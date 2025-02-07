@@ -16,8 +16,16 @@ public class ChatService {
         this.chatRepository = chatRepository;
     }
 
+    public List<Chat> get() {
+        return chatRepository.listAll();
+    }
+
+    public Optional<Chat> get(String id) {
+        return chatRepository.findByIdOptional(id);
+    }
+
     @Transactional
-    public Chat createProject(Chat chat) {
+    public Chat create(Chat chat) {
         if (chat.id == null || chat.id.isBlank()) {
             chat.setId(java.util.UUID.randomUUID().toString());
         }
@@ -25,13 +33,5 @@ public class ChatService {
         chatRepository.persist(chat);
 
         return chat;
-    }
-
-    public List<Chat> get() {
-        return chatRepository.listAll();
-    }
-
-    public Optional<Chat> get(String id) {
-        return chatRepository.findByIdOptional(id);
     }
 }

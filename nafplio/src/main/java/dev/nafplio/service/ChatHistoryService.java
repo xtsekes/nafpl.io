@@ -18,11 +18,11 @@ public class ChatHistoryService {
         this.chatHistoryRepository = chatHistoryRepository;
     }
 
-    public List<ChatHistory> getHistory(String chatId) {
+    public List<ChatHistory> get(String chatId) {
         return chatHistoryRepository.findByChatId(chatId);
     }
 
-    public PageResult<List<ChatHistory>> getRecentHistory(String chatId, int skip, int take) {
+    public PageResult<List<ChatHistory>> getRecent(String chatId, int skip, int take) {
         if (skip < 0 || take <= 0) {
             throw new IllegalArgumentException("Skip must be non-negative and take must be positive");
         }
@@ -33,7 +33,7 @@ public class ChatHistoryService {
     }
 
     @Transactional
-    public ChatHistory savePrompt(String chatId, String prompt, String response) {
+    public ChatHistory create(String chatId, String prompt, String response) {
         var chatHistory = new ChatHistory();
         chatHistory.setChatId(chatId);
         chatHistory.setPrompt(prompt);

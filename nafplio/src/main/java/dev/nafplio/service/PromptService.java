@@ -39,13 +39,13 @@ public final class PromptService {
                     logger.error("An Error occurred!", failure);
 
                     // Save in a single operation
-                    Unis.run(() -> chatHistoryService.savePrompt(chatId, prompt, "An Error occurred!"));
+                    Unis.run(() -> chatHistoryService.create(chatId, prompt, "An Error occurred!"));
                 })
                 .onCompletion().invoke(() -> {
                     logger.debug("Response: {}", builder);
 
                     // Save in a single operation
-                    Unis.run(() -> chatHistoryService.savePrompt(chatId, prompt, builder.toString()));
+                    Unis.run(() -> chatHistoryService.create(chatId, prompt, builder.toString()));
                 });
     }
 
@@ -54,7 +54,7 @@ public final class PromptService {
             var memoryStoreMessages = chatMemoryStore.getMessages(chatId);
             if (memoryStoreMessages.isEmpty()) {
 
-                memoryStoreMessages = chatHistoryService.getHistory(chatId)
+                memoryStoreMessages = chatHistoryService.get(chatId)
                         .stream().flatMap(history ->
                                 Stream.of(
                                         dev.langchain4j.data.message.UserMessage.from(history.getPrompt()),

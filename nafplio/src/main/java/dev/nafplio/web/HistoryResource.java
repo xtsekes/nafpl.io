@@ -21,7 +21,7 @@ public class HistoryResource {
     @GET
     @Path("/{chatId}")
     public List<ChatHistory> list(@PathParam("chatId") String chatId) {
-        return chatHistoryService.getHistory(chatId);
+        return chatHistoryService.get(chatId);
     }
 
     @GET
@@ -30,6 +30,6 @@ public class HistoryResource {
         int skip = (pageNumber != null && pageNumber > 0) ? (pageNumber - 1) * (pageSize != null ? pageSize : 10) : 0;
         int take = (pageSize != null && pageSize > 0) ? pageSize : 10;
 
-        return chatHistoryService.getRecentHistory(chatId, skip, take);
+        return chatHistoryService.getRecent(chatId, skip, take);
     }
 }

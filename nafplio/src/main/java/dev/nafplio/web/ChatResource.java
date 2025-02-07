@@ -126,7 +126,7 @@ public class ChatResource {
         try {
             ingestProject(ingestService, inputDirectory, createProjectPayload.title());
 
-            var result = chatService.createProject(projectEntity);
+            var result = chatService.create(projectEntity);
 
             return Response.status(Response.Status.CREATED).entity(result).build();
         } catch (IOException e) {
