@@ -1,4 +1,4 @@
-package dev.nafplio.data.entity;
+package dev.nafplio.data;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

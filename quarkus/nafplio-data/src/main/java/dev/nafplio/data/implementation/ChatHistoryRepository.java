@@ -1,6 +1,6 @@
-package dev.nafplio.data.repository;
+package dev.nafplio.data.implementation;
 
-import dev.nafplio.data.entity.ChatHistory;
+import dev.nafplio.data.ChatHistory;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -9,7 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
 @ApplicationScoped
-public class ChatHistoryRepository implements PanacheRepository<ChatHistory> {
+final class ChatHistoryRepository implements PanacheRepository<ChatHistory> {
     public List<ChatHistory> findByChatId(String chatId) {
         return find("chatId", Sort.by("timestamp"), chatId).list();
     }

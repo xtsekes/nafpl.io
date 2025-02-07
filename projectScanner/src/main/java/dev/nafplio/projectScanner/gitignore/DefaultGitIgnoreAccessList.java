@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultGitIgnoreAccessList implements GitIgnoreAccessList {
+public final class DefaultGitIgnoreAccessList implements GitIgnoreAccessList {
     private final Path rootDirectory;
     private final List<PathMatcher> matchers;
 

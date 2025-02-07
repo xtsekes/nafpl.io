@@ -2,7 +2,7 @@ package dev.nafplio.projectScanner.gitignore;
 
 import java.nio.file.Path;
 
-public class GitIgnoreAccessListNode implements GitIgnoreAccessList {
+public final class GitIgnoreAccessListNode implements GitIgnoreAccessList {
     private final GitIgnoreAccessList parent;
     private final GitIgnoreAccessList accessList;
 

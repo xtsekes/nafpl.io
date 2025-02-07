@@ -1,8 +1,7 @@
-package dev.nafplio.service;
+package dev.nafplio.data.implementation;
 
-import dev.nafplio.data.entity.ChatHistory;
-import dev.nafplio.data.repository.ChatHistoryRepository;
-import dev.nafplio.service.model.PageResult;
+import dev.nafplio.data.ChatHistory;
+import dev.nafplio.data.PageResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
@@ -11,17 +10,19 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @ApplicationScoped
-public class ChatHistoryService {
+final class DefaultChatHistoryService implements dev.nafplio.data.ChatHistoryService {
     private final ChatHistoryRepository chatHistoryRepository;
 
-    public ChatHistoryService(ChatHistoryRepository chatHistoryRepository) {
+    DefaultChatHistoryService(ChatHistoryRepository chatHistoryRepository) {
         this.chatHistoryRepository = chatHistoryRepository;
     }
 
+    @Override
     public List<ChatHistory> get(String chatId) {
         return chatHistoryRepository.findByChatId(chatId);
     }
 
+    @Override
     public PageResult<List<ChatHistory>> getRecent(String chatId, int skip, int take) {
         if (skip < 0 || take <= 0) {
             throw new IllegalArgumentException("Skip must be non-negative and take must be positive");
@@ -33,6 +34,7 @@ public class ChatHistoryService {
     }
 
     @Transactional
+    @Override
     public ChatHistory create(String chatId, String prompt, String response) {
         var chatHistory = new ChatHistory();
         chatHistory.setChatId(chatId);

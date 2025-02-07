@@ -1,7 +1,7 @@
-package dev.nafplio.service;
+package dev.nafplio.data.implementation;
 
-import dev.nafplio.data.entity.Chat;
-import dev.nafplio.data.repository.ChatRepository;
+import dev.nafplio.data.Chat;
+import dev.nafplio.data.ChatService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
@@ -9,22 +9,25 @@ import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
-public class ChatService {
+final class DefaultChatService implements ChatService {
     private final ChatRepository chatRepository;
 
-    public ChatService(ChatRepository chatRepository) {
+    DefaultChatService(ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 
+    @Override
     public List<Chat> get() {
         return chatRepository.listAll();
     }
 
+    @Override
     public Optional<Chat> get(String id) {
         return chatRepository.findByIdOptional(id);
     }
 
     @Transactional
+    @Override
     public Chat create(Chat chat) {
         if (chat.id == null || chat.id.isBlank()) {
             chat.setId(java.util.UUID.randomUUID().toString());

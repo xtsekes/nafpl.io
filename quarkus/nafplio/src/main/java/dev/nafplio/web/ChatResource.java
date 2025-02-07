@@ -1,9 +1,9 @@
 package dev.nafplio.web;
 
-import dev.nafplio.data.entity.Chat;
+import dev.nafplio.data.Chat;
+import dev.nafplio.data.ChatService;
 import dev.nafplio.projectScanner.ProjectScanner;
 import dev.nafplio.service.IngestService;
-import dev.nafplio.service.ChatService;
 import dev.nafplio.service.model.IngestModel;
 import dev.nafplio.web.model.CreateProjectPayload;
 import dev.nafplio.web.model.ProjectView;

@@ -1,4 +1,4 @@
-package dev.nafplio.service.model;
+package dev.nafplio.data;
 
 public record PageResult<T>(int pageNumber, int pageSize, int totalPages, long totalElements, T data) {
     public PageResult {
