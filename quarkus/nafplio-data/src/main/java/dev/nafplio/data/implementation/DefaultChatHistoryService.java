@@ -24,6 +24,10 @@ final class DefaultChatHistoryService implements dev.nafplio.data.ChatHistorySer
 
     @Override
     public PageResult<List<ChatHistory>> getRecent(String chatId, int skip, int take) {
+        if (chatId == null || chatId.isBlank()) {
+            throw new IllegalArgumentException("Chat ID must be non-null and non-empty");
+        }
+
         if (skip < 0 || take <= 0) {
             throw new IllegalArgumentException("Skip must be non-negative and take must be positive");
         }
@@ -36,6 +40,10 @@ final class DefaultChatHistoryService implements dev.nafplio.data.ChatHistorySer
     @Transactional
     @Override
     public ChatHistory create(String chatId, String prompt, String response) {
+        if (chatId == null || chatId.isBlank()) {
+            throw new IllegalArgumentException("Chat ID must be non-null and non-empty");
+        }
+
         var chatHistory = new ChatHistory();
         chatHistory.setChatId(chatId);
         chatHistory.setPrompt(prompt);
