@@ -17,7 +17,7 @@ import java.util.TimeZone;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-class ChatHistoryRepositoryTest {
+class ChatHistoryServiceTest {
 
     @Inject
     ChatHistoryService chatHistoryService;
