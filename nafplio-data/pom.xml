@@ -6,17 +6,12 @@
 
     <parent>
         <groupId>dev.hackathon</groupId>
-        <artifactId>nafplio-quarkus-parent</artifactId>
-        <version>${revision}</version>
+        <artifactId>nafplio-parent</artifactId>
+        <relativePath>../parent</relativePath>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>nafplio-data</artifactId>
-
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -50,4 +45,23 @@
             <artifactId>quarkus-test-h2</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>nafplio-data</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>io.smallrye</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

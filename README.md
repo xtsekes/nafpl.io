@@ -70,6 +70,6 @@ To simplify the process of building and running the application, we use Docker C
    ```
  3. **Run the application in dev mode**:
     ```bash
-    ./mvnw compile quarkus:dev
+    ./mvnw compile quarkus:dev -Pnafplio
     ```
     The application will be available at [http://localhost:8080/](http://localhost:8080/)
