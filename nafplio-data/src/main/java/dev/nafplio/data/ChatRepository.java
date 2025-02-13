@@ -1,4 +1,4 @@
-package dev.nafplio.data.entity;
+package dev.nafplio.data;
 
 import dev.nafplio.domain.ChatStore;
 import dev.nafplio.domain.PageResult;
@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import java.util.Optional;
 
 @ApplicationScoped
-public final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatStore {
+final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatStore {
     @Override
     public PageResult<dev.nafplio.domain.Chat> get(int skip, int take) {
         var count = count();
@@ -40,22 +40,22 @@ public final class ChatRepository implements PanacheRepositoryBase<Chat, String>
         return mapToDomain(entity);
     }
 
-    private static dev.nafplio.domain.Chat mapToDomain(dev.nafplio.data.entity.Chat entity) {
+    private static dev.nafplio.domain.Chat mapToDomain(dev.nafplio.data.Chat entity) {
         return dev.nafplio.domain.Chat.builder()
-                .id(entity.id)
-                .rootDirectory(entity.rootDirectory)
-                .title(entity.title)
-                .createdAt(entity.createdAt)
+                .id(entity.getId())
+                .rootDirectory(entity.getRootDirectory())
+                .title(entity.getTitle())
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 
-    private static dev.nafplio.data.entity.Chat mapToEntity(dev.nafplio.domain.Chat domain) {
-        var entity = new dev.nafplio.data.entity.Chat();
+    private static dev.nafplio.data.Chat mapToEntity(dev.nafplio.domain.Chat domain) {
+        var entity = new dev.nafplio.data.Chat();
 
-        entity.id = domain.getId();
-        entity.rootDirectory = domain.getRootDirectory();
-        entity.title = domain.getTitle();
-        entity.createdAt = domain.getCreatedAt();
+        entity.setId(domain.getId());
+        entity.setRootDirectory(domain.getRootDirectory());
+        entity.setTitle(domain.getTitle());
+        entity.setCreatedAt(domain.getCreatedAt());
 
         return entity;
     }

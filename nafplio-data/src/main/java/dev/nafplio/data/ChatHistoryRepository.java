@@ -1,4 +1,4 @@
-package dev.nafplio.data.entity;
+package dev.nafplio.data;
 
 import dev.nafplio.domain.ChatHistoryStore;
 import dev.nafplio.domain.PageResult;
@@ -9,13 +9,9 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 
 @ApplicationScoped
-public final class ChatHistoryRepository implements PanacheRepository<ChatHistory>, ChatHistoryStore {
-    public List<ChatHistory> findByChatId(String chatId) {
-        return find("chatId", Sort.by("timestamp"), chatId).list();
-    }
+final class ChatHistoryRepository implements PanacheRepository<ChatHistory>, ChatHistoryStore {
 
     @Override
     public PageResult<dev.nafplio.domain.ChatHistory> get(String chatId, int skip, int take) {
@@ -48,7 +44,7 @@ public final class ChatHistoryRepository implements PanacheRepository<ChatHistor
     @Transactional
     @Override
     public dev.nafplio.domain.ChatHistory create(String chatId, String prompt, String response) {
-        var entity = new dev.nafplio.data.entity.ChatHistory();
+        var entity = new ChatHistory();
         entity.setChatId(chatId);
         entity.setPrompt(prompt);
         entity.setResponse(response);
@@ -59,7 +55,7 @@ public final class ChatHistoryRepository implements PanacheRepository<ChatHistor
         return mapToDomain(entity);
     }
 
-    private static dev.nafplio.domain.ChatHistory mapToDomain(dev.nafplio.data.entity.ChatHistory entity) {
+    private static dev.nafplio.domain.ChatHistory mapToDomain(ChatHistory entity) {
         return dev.nafplio.domain.ChatHistory.builder()
                 .chatId(entity.getChatId())
                 .prompt(entity.getPrompt())

@@ -7,7 +7,6 @@ import dev.nafplio.projectScanner.ProjectScanner;
 import dev.nafplio.service.IngestService;
 import dev.nafplio.service.model.IngestModel;
 import dev.nafplio.web.model.CreateProjectPayload;
-import dev.nafplio.web.model.ProjectView;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -96,7 +95,7 @@ public class ChatResource {
 
         return Response
                 .status(Response.Status.OK)
-                .entity(PageResult.of(pageNumber, pageSize, chats.totalElements(), chats.data().stream().map(this::toProjectView).toList()))
+                .entity(PageResult.of(pageNumber, pageSize, chats.totalElements(), chats.data()))
                 .build();
     }
 
@@ -110,7 +109,7 @@ public class ChatResource {
         var project = chatService.get(id);
 
         return project.isPresent()
-                ? Response.status(Response.Status.OK).entity(toProjectView(project.get())).build()
+                ? Response.status(Response.Status.OK).entity(project.get()).build()
                 : Response.status(Response.Status.BAD_REQUEST).build();
     }
 
@@ -152,18 +151,6 @@ public class ChatResource {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private ProjectView toProjectView(Chat chat) {
-        if (chat == null) {
-            return null;
-        }
-
-        return new ProjectView(
-                chat.getId(),
-                chat.getRootDirectory(),
-                chat.getTitle()
-        );
     }
 
     private static void ingestProject(IngestService ingestService, java.nio.file.Path inputDirectory, String title) throws IOException {

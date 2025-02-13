@@ -1,4 +1,4 @@
-package dev.nafplio.data.entity;
+package dev.nafplio.data;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "chat_history")
-public final class ChatHistory {
+final class ChatHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
