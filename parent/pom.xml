@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>dev.hackathon</groupId>
     <artifactId>nafplio-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -9,6 +11,7 @@
 
     <properties>
         <java.version>21</java.version>
+
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
@@ -18,8 +21,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- maven -->
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <surefire-plugin.version>3.5.2</surefire-plugin.version>
+        <jandex.version>3.2.6</jandex.version>
 
         <!-- Quarkus -->
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -29,14 +33,12 @@
         <skipITs>true</skipITs>
 
         <!-- other -->
-        <jandex-maven-plugin.version>3.2.3</jandex-maven-plugin.version>
         <lombok.version>1.18.36</lombok.version>
         <slf4j.version>2.0.16</slf4j.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Quarkus -->
             <dependency>
                 <groupId>${quarkus.platform.group-id}</groupId>
                 <artifactId>${quarkus.platform.artifact-id}</artifactId>
@@ -44,20 +46,41 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Other-->
+
+            <!-- other dependencies -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <!-- Quarkus -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5-mockito</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Other -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>
@@ -80,7 +103,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
+                    <version>${compiler-plugin.version}</version>
                     <configuration>
                         <parameters>true</parameters>
                         <annotationProcessorPaths>
@@ -94,23 +117,17 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
+                    <version>${surefire-plugin.version}</version>
                     <configuration>
                         <systemPropertyVariables>
                             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                             <maven.home>${maven.home}</maven.home>
-
-<!--                            <quarkus.jacoco.data-file>${maven.multiModuleProjectDirectory}/target/jacoco.exec</quarkus.jacoco.data-file>-->
-<!--                            <quarkus.jacoco.reuse-data-file>true</quarkus.jacoco.reuse-data-file>-->
-<!--                            <quarkus.jacoco.report-location>${maven.multiModuleProjectDirectory}/target/coverage</quarkus.jacoco.report-location>-->
-
-                            <!-- skip -->
-                            <maven.settings>${session.request.userSettingsFile.absolutePath}</maven.settings>
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${surefire-plugin.version}</version>
                     <executions>
                         <execution>
                             <goals>
@@ -130,7 +147,7 @@
                 <plugin>
                     <groupId>io.smallrye</groupId>
                     <artifactId>jandex-maven-plugin</artifactId>
-                    <version>${jandex-maven-plugin.version}</version>
+                    <version>${jandex.version}</version>
                     <executions>
                         <execution>
                             <id>make-index</id>
@@ -158,5 +175,4 @@
             </properties>
         </profile>
     </profiles>
-
 </project>
