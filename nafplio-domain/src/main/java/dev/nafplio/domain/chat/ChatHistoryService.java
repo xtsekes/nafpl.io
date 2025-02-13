@@ -8,4 +8,6 @@ public interface ChatHistoryService {
     PageResult<ChatHistory> getRecent(Chat chat, int skip, int take);
 
     ChatHistory create(Chat chat, String prompt, String response);
+
+    void delete(Chat chat);
 }

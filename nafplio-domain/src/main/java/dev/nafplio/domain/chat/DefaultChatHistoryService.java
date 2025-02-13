@@ -40,4 +40,11 @@ final class DefaultChatHistoryService implements ChatHistoryService {
 
         return chatHistoryStore.create(chat.getId(), prompt, response);
     }
+
+    @Override
+    public void delete(Chat chat) {
+        Objects.requireNonNull(chat, "Chat is required");
+
+        chatHistoryStore.delete(chat);
+    }
 }

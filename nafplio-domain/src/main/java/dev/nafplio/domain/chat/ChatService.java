@@ -10,4 +10,6 @@ public interface ChatService {
     Optional<Chat> get(String id);
 
     Chat create(Chat chat);
+
+    void delete(Chat chat);
 }

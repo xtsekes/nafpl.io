@@ -1,17 +1,69 @@
 package dev.nafplio.domain.chat;
 
+import io.quarkus.test.junit.QuarkusTest;
+import lombok.AllArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@QuarkusTest
+@AllArgsConstructor
 class ChatHistoryServiceTest {
     private final ChatService chatService;
     private final ChatHistoryService chatHistoryService;
 
-    public ChatHistoryServiceTest() {
-        var chatStore = new TestChatStore();
-        chatService = new DefaultChatService(chatStore);
-        chatHistoryService = new DefaultChatHistoryService(chatStore, new TestChatHistoryStore());
+    @BeforeEach
+    void setup() {
+        chatService.create(Chat.builder().id("1").title("Title").rootDirectory("Root").build());
+        chatService.create(Chat.builder().id("2").title("Title 2").rootDirectory("Root 2").build());
+
+        var seedData = List.of(
+                ChatHistory.builder()
+                        .id("1")
+                        .chatId("1")
+                        .prompt("Prompt 1")
+                        .response("Message 1")
+                        .timestamp(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()))
+                        .build(),
+                ChatHistory.builder()
+                        .id("2")
+                        .chatId("1")
+                        .prompt("Prompt 2")
+                        .response("Message 2")
+                        .timestamp(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()).minus(Duration.ofDays(1)))
+                        .build(),
+                ChatHistory.builder()
+                        .id("3")
+                        .chatId("2")
+                        .prompt("Prompt 3")
+                        .response("Message 3")
+                        .timestamp(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()).minus(Duration.ofDays(2))
+                        ).build()
+        );
+
+        for (var seedDatum : seedData) {
+            chatHistoryService.create(
+                    chatService.get(seedDatum.getChatId()).orElseThrow(),
+                    seedDatum.getPrompt(),
+                    seedDatum.getResponse()
+            );
+        }
+    }
+
+    @AfterEach
+    void cleanup() {
+        chatService.delete(Chat.builder().id("1").build());
+        chatService.delete(Chat.builder().id("2").build());
+
+        chatHistoryService.delete(Chat.builder().id("1").build());
+        chatHistoryService.delete(Chat.builder().id("2").build());
     }
 
     @Test
@@ -114,12 +166,14 @@ class ChatHistoryServiceTest {
 
     @Test
     void createChatHistory() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("2").orElseThrow();
         var createdChatHistory = chatHistoryService.create(chat, "New Prompt", "New Message");
 
         assertNotNull(createdChatHistory);
         assertEquals("New Prompt", createdChatHistory.getPrompt());
         assertEquals("New Message", createdChatHistory.getResponse());
+
+        chatHistoryService.delete(chat);
     }
 
 

@@ -40,6 +40,12 @@ final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatS
         return mapToDomain(entity);
     }
 
+    @Override
+    @Transactional
+    public void delete(dev.nafplio.domain.chat.Chat chat) {
+        this.delete(mapToEntity(chat));
+    }
+
     private static dev.nafplio.domain.chat.Chat mapToDomain(dev.nafplio.data.Chat entity) {
         return dev.nafplio.domain.chat.Chat.builder()
                 .id(entity.getId())

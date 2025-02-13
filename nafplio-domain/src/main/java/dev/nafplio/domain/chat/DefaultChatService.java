@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -29,6 +30,8 @@ final class DefaultChatService implements ChatService {
 
     @Override
     public Chat create(Chat chat) {
+        Objects.requireNonNull(chat, "Chat is required");
+
         if (chat.getId() == null || chat.getId().isBlank()) {
             chat.setId(java.util.UUID.randomUUID().toString());
         }
@@ -38,5 +41,15 @@ final class DefaultChatService implements ChatService {
         }
 
         return chatStore.create(chat);
+    }
+
+    @Override
+    public void delete(Chat chat) {
+        Objects.requireNonNull(chat, "Chat is required");
+
+        if (chat.getId() == null || chat.getId().isBlank()) {
+            throw new IllegalArgumentException("Chat ID is required");
+        }
+        chatStore.delete(chat);
     }
 }

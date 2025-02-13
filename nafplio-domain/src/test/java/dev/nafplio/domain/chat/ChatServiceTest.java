@@ -1,14 +1,26 @@
 package dev.nafplio.domain.chat;
 
-import org.junit.jupiter.api.Test;
+import io.quarkus.test.junit.QuarkusTest;
+import lombok.AllArgsConstructor;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@QuarkusTest
+@AllArgsConstructor
 class ChatServiceTest {
     private final ChatService chatService;
 
-    ChatServiceTest() {
-        this.chatService = new DefaultChatService(new TestChatStore());
+    @BeforeEach
+    void setup() {
+        chatService.create(Chat.builder().id("1").title("Title").rootDirectory("Root").build());
+        chatService.create(Chat.builder().id("2").title("Title 2").rootDirectory("Root 2").build());
+    }
+
+    @AfterEach
+    void cleanup() {
+        chatService.delete(Chat.builder().id("1").build());
+        chatService.delete(Chat.builder().id("2").build());
     }
 
     @Test
@@ -23,10 +35,10 @@ class ChatServiceTest {
 
     @Test
     void getById() {
-        var chat = chatService.get("1");
+        var chat = chatService.get("1").orElseThrow();
 
         assertNotNull(chat);
-        assertEquals("1", chat.get().getId());
+        assertEquals("1", chat.getId());
     }
 
     @Test
@@ -40,6 +52,8 @@ class ChatServiceTest {
         assertNotNull(createdChat.getId());
         assertEquals("New Chat", createdChat.getTitle());
         assertEquals("New Root", createdChat.getRootDirectory());
+
+        chatService.delete(createdChat);
     }
 
     @Test
@@ -55,6 +69,8 @@ class ChatServiceTest {
         assertNotEquals("", createdChat.getId());
         assertEquals("New Chat", createdChat.getTitle());
         assertEquals("New Root", createdChat.getRootDirectory());
+
+        chatService.delete(createdChat);
     }
 
     @Test
@@ -70,5 +86,7 @@ class ChatServiceTest {
         assertEquals("3", createdChat.getId());
         assertEquals("New Chat", createdChat.getTitle());
         assertEquals("New Root", createdChat.getRootDirectory());
+
+        chatService.delete(createdChat);
     }
 }

@@ -1,15 +1,17 @@
 package dev.nafplio.domain.chat;
 
 import dev.nafplio.domain.PageResult;
+import io.quarkus.test.Mock;
+import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-class TestChatStore implements ChatStore {
-    private final List<Chat> data = List.of(
-            Chat.builder().id("1").title("Title").rootDirectory("Root").build(),
-            Chat.builder().id("2").title("Title 2").rootDirectory("Root 2").build()
-    );
+@Mock
+@ApplicationScoped
+class InMemoryChatStore implements ChatStore {
+    private final List<Chat> data = new ArrayList<>();
 
     @Override
     public Optional<Chat> get(String id) {
@@ -23,6 +25,12 @@ class TestChatStore implements ChatStore {
 
     @Override
     public Chat create(Chat chat) {
+        data.add(chat);
         return chat;
+    }
+
+    @Override
+    public void delete(Chat chat) {
+        data.removeIf(x -> x.getId().equals(chat.getId()));
     }
 }

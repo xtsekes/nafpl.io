@@ -1,7 +1,8 @@
 package dev.nafplio.data;
 
-import dev.nafplio.domain.chat.ChatHistoryStore;
 import dev.nafplio.domain.PageResult;
+import dev.nafplio.domain.chat.Chat;
+import dev.nafplio.domain.chat.ChatHistoryStore;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -41,8 +42,8 @@ final class ChatHistoryRepository implements PanacheRepository<ChatHistory>, Cha
         return PageResult.of(skip / take, take, count, data);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public dev.nafplio.domain.chat.ChatHistory create(String chatId, String prompt, String response) {
         var entity = new ChatHistory();
         entity.setChatId(chatId);
@@ -53,6 +54,12 @@ final class ChatHistoryRepository implements PanacheRepository<ChatHistory>, Cha
         this.persist(entity);
 
         return mapToDomain(entity);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Chat chat) {
+        delete("chatId", chat.getId());
     }
 
     private static dev.nafplio.domain.chat.ChatHistory mapToDomain(ChatHistory entity) {

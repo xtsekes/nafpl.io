@@ -1,6 +1,8 @@
 package dev.nafplio.domain.chat;
 
 import dev.nafplio.domain.PageResult;
+import io.quarkus.test.Mock;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -9,30 +11,10 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
-class TestChatHistoryStore implements ChatHistoryStore {
-    private final List<ChatHistory> data = new ArrayList<>(List.of(
-            ChatHistory.builder()
-                    .id("1")
-                    .chatId("1")
-                    .prompt("Prompt 1")
-                    .response("Message 1")
-                    .timestamp(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()))
-                    .build(),
-            ChatHistory.builder()
-                    .id("2")
-                    .chatId("1")
-                    .prompt("Prompt 2")
-                    .response("Message 2")
-                    .timestamp(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()).minus(Duration.ofDays(1)))
-                    .build(),
-            ChatHistory.builder()
-                    .id("3")
-                    .chatId("2")
-                    .prompt("Prompt 3")
-                    .response("Message 3")
-                    .timestamp(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()).minus(Duration.ofDays(2))
-                    ).build()
-    ));
+@Mock
+@ApplicationScoped
+class InMemoryChatHistoryStore implements ChatHistoryStore {
+    private final List<ChatHistory> data = new ArrayList<>();
 
     @Override
     public PageResult<ChatHistory> get(String chatId, int skip, int take) {
@@ -60,7 +42,7 @@ class TestChatHistoryStore implements ChatHistoryStore {
                 .limit(take)
                 .toList();
 
-        return PageResult.of(data.size() / take, take, count, result);
+        return PageResult.of((int)count / take, take, count, result);
     }
 
     @Override
@@ -75,5 +57,10 @@ class TestChatHistoryStore implements ChatHistoryStore {
 
         data.add(result);
         return result;
+    }
+
+    @Override
+    public void delete(Chat chat) {
+        data.removeIf(x -> x.getChatId().equals(chat.getId()));
     }
 }
