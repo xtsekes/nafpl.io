@@ -1,4 +1,6 @@
-package dev.nafplio.domain;
+package dev.nafplio.domain.chat;
+
+import dev.nafplio.domain.PageResult;
 
 import java.util.List;
 import java.util.Optional;

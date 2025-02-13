@@ -1,4 +1,6 @@
-package dev.nafplio.domain;
+package dev.nafplio.domain.chat;
+
+import dev.nafplio.domain.PageResult;
 
 public interface ChatHistoryService {
     PageResult<ChatHistory> get(Chat chat, int skip, int take);

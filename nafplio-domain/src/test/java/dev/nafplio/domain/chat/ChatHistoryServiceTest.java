@@ -1,4 +1,4 @@
-package dev.nafplio.domain;
+package dev.nafplio.domain.chat;
 
 import org.junit.jupiter.api.Test;
 

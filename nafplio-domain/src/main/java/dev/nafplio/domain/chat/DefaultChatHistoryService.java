@@ -1,5 +1,6 @@
-package dev.nafplio.domain;
+package dev.nafplio.domain.chat;
 
+import dev.nafplio.domain.PageResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 

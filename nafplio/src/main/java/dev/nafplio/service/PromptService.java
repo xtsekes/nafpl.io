@@ -2,8 +2,8 @@ package dev.nafplio.service;
 
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.nafplio.Unis;
-import dev.nafplio.domain.ChatHistoryService;
-import dev.nafplio.domain.ChatService;
+import dev.nafplio.domain.chat.ChatHistoryService;
+import dev.nafplio.domain.chat.ChatService;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.RequestScoped;
 import org.slf4j.Logger;

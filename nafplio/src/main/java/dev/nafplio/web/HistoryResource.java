@@ -1,7 +1,7 @@
 package dev.nafplio.web;
 
-import dev.nafplio.domain.ChatHistoryService;
-import dev.nafplio.domain.ChatService;
+import dev.nafplio.domain.chat.ChatHistoryService;
+import dev.nafplio.domain.chat.ChatService;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;

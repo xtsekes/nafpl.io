@@ -1,6 +1,6 @@
 package dev.nafplio.data;
 
-import dev.nafplio.domain.ChatStore;
+import dev.nafplio.domain.chat.ChatStore;
 import dev.nafplio.domain.PageResult;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Sort;
@@ -12,7 +12,7 @@ import java.util.Optional;
 @ApplicationScoped
 final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatStore {
     @Override
-    public PageResult<dev.nafplio.domain.Chat> get(int skip, int take) {
+    public PageResult<dev.nafplio.domain.chat.Chat> get(int skip, int take) {
         var count = count();
         var data = findAll(Sort.by("id"))
                 .page(skip / take, take)
@@ -24,7 +24,7 @@ final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatS
     }
 
     @Override
-    public Optional<dev.nafplio.domain.Chat> get(String id) {
+    public Optional<dev.nafplio.domain.chat.Chat> get(String id) {
         return this
                 .findByIdOptional(id)
                 .map(ChatRepository::mapToDomain);
@@ -32,7 +32,7 @@ final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatS
 
     @Override
     @Transactional
-    public dev.nafplio.domain.Chat create(dev.nafplio.domain.Chat chat) {
+    public dev.nafplio.domain.chat.Chat create(dev.nafplio.domain.chat.Chat chat) {
         var entity = mapToEntity(chat);
 
         this.persist(entity);
@@ -40,8 +40,8 @@ final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatS
         return mapToDomain(entity);
     }
 
-    private static dev.nafplio.domain.Chat mapToDomain(dev.nafplio.data.Chat entity) {
-        return dev.nafplio.domain.Chat.builder()
+    private static dev.nafplio.domain.chat.Chat mapToDomain(dev.nafplio.data.Chat entity) {
+        return dev.nafplio.domain.chat.Chat.builder()
                 .id(entity.getId())
                 .rootDirectory(entity.getRootDirectory())
                 .title(entity.getTitle())
@@ -49,7 +49,7 @@ final class ChatRepository implements PanacheRepositoryBase<Chat, String>, ChatS
                 .build();
     }
 
-    private static dev.nafplio.data.Chat mapToEntity(dev.nafplio.domain.Chat domain) {
+    private static dev.nafplio.data.Chat mapToEntity(dev.nafplio.domain.chat.Chat domain) {
         var entity = new dev.nafplio.data.Chat();
 
         entity.setId(domain.getId());

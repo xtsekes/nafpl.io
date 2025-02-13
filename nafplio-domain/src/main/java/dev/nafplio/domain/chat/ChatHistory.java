@@ -1,4 +1,4 @@
-package dev.nafplio.domain;
+package dev.nafplio.domain.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,16 +7,18 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
-public class Chat {
+public class ChatHistory {
     private String id;
 
-    private String rootDirectory;
+    private String chatId;
 
-    private String title;
+    private String prompt;
 
-    private LocalDateTime createdAt;
+    private String response;
+
+    private LocalDateTime timestamp;
 }

@@ -1,7 +1,7 @@
 package dev.nafplio.web;
 
-import dev.nafplio.domain.Chat;
-import dev.nafplio.domain.ChatService;
+import dev.nafplio.domain.chat.Chat;
+import dev.nafplio.domain.chat.ChatService;
 import dev.nafplio.domain.PageResult;
 import dev.nafplio.projectScanner.ProjectScanner;
 import dev.nafplio.service.IngestService;
