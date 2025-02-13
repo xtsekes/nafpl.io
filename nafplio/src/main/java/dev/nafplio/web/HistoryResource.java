@@ -1,35 +1,85 @@
 package dev.nafplio.web;
 
-import dev.nafplio.data.ChatHistory;
-import dev.nafplio.data.ChatHistoryService;
-import dev.nafplio.data.PageResult;
+import dev.nafplio.domain.ChatHistoryService;
+import dev.nafplio.domain.ChatService;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
+import lombok.AllArgsConstructor;
 
-import java.util.List;
-
+@AllArgsConstructor
 @Path("/chats/history")
 public class HistoryResource {
+    final ChatService chatService;
     final ChatHistoryService chatHistoryService;
-
-    public HistoryResource(ChatHistoryService chatHistoryService) {
-        this.chatHistoryService = chatHistoryService;
-    }
 
     @GET
     @Path("/{chatId}")
-    public List<ChatHistory> list(@PathParam("chatId") String chatId) {
-        return chatHistoryService.get(chatId);
+    public Response list(@PathParam("chatId") String chatId, @QueryParam("pageSize") Integer pageSize, @QueryParam("pageNumber") Integer pageNumber) {
+        // set defaults
+        pageNumber = pageNumber != null ? pageNumber : 1;
+        pageSize = pageSize != null ? pageSize : 100;
+
+        // validate
+        if (pageNumber <= 0) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        if (pageSize <= 0) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        var chat = chatService.get(chatId);
+
+        if (chat.isEmpty()) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(chatHistoryService.get(chat.get(), (pageNumber - 1) * pageSize, pageSize))
+                .build();
     }
 
     @GET
     @Path("/{chatId}/recent")
-    public PageResult<List<ChatHistory>> recent(@PathParam("chatId") String chatId, @QueryParam("pageSize") Integer pageSize, @QueryParam("pageNumber") Integer pageNumber) {
-        int skip = (pageNumber != null && pageNumber > 0) ? (pageNumber - 1) * (pageSize != null ? pageSize : 10) : 0;
-        int take = (pageSize != null && pageSize > 0) ? pageSize : 10;
+    public Response recent(@PathParam("chatId") String chatId, @QueryParam("pageSize") Integer pageSize, @QueryParam("pageNumber") Integer pageNumber) {
+        // set defaults
+        pageNumber = pageNumber != null ? pageNumber : 1;
+        pageSize = pageSize != null ? pageSize : 100;
 
-        return chatHistoryService.getRecent(chatId, skip, take);
+        // validate
+        if (pageNumber <= 0) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        if (pageSize <= 0) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        var chat = chatService.get(chatId);
+
+        if (chat.isEmpty()) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(chatHistoryService.getRecent(chat.get(), (pageNumber - 1) * pageSize, pageSize))
+                .build();
     }
 }

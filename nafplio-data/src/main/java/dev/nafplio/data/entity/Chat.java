@@ -1,4 +1,4 @@
-package dev.nafplio.data;
+package dev.nafplio.data.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Chat {
+public final class Chat {
     @Id
     public String id;
 

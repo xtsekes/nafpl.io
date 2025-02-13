@@ -1,6 +1,8 @@
-package dev.nafplio.data;
+package dev.nafplio.domain;
 
-public record PageResult<T>(int pageNumber, int pageSize, int totalPages, long totalElements, T data) {
+import java.util.List;
+
+public record PageResult<T>(int pageNumber, int pageSize, int totalPages, long totalElements, List<T> data) {
     public PageResult {
         if (pageNumber < 0) {
             throw new IllegalArgumentException("Page number cannot be negative");
@@ -20,7 +22,7 @@ public record PageResult<T>(int pageNumber, int pageSize, int totalPages, long t
         return new PageResult<>(pageNumber, pageSize, 0, 0, null);
     }
 
-    public static <T> PageResult<T> of(int pageNumber, int pageSize, long totalElements, T data) {
+    public static <T> PageResult<T> of(int pageNumber, int pageSize, long totalElements, List<T> data) {
         if (totalElements == 0) {
             return empty(pageNumber, pageSize);
         }

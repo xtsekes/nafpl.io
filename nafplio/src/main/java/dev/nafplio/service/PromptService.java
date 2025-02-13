@@ -2,7 +2,8 @@ package dev.nafplio.service;
 
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.nafplio.Unis;
-import dev.nafplio.data.ChatHistoryService;
+import dev.nafplio.domain.ChatHistoryService;
+import dev.nafplio.domain.ChatService;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.RequestScoped;
 import org.slf4j.Logger;
@@ -17,20 +18,23 @@ public final class PromptService {
     private static final Logger logger = LoggerFactory.getLogger(PromptService.class);
 
     private final SessionScopedAiService aiService;
+    private final ChatService chatService;
     private final ChatHistoryService chatHistoryService;
     private final ChatMemoryStore chatMemoryStore;
 
-    public PromptService(SessionScopedAiService aiService, ChatHistoryService chatHistoryService, ChatMemoryStore chatMemoryStore) {
+    public PromptService(SessionScopedAiService aiService, ChatService chatService, ChatHistoryService chatHistoryService, ChatMemoryStore chatMemoryStore) {
+        Objects.requireNonNull(chatService);
         Objects.requireNonNull(aiService);
         Objects.requireNonNull(chatHistoryService);
 
         this.aiService = aiService;
+        this.chatService = chatService;
         this.chatHistoryService = chatHistoryService;
         this.chatMemoryStore = chatMemoryStore;
     }
 
     public Multi<String> chat(String chatId, String prompt) {
-        Unis.run(createSupplier(chatMemoryStore, chatHistoryService, chatId));
+        Unis.run(createSupplier(chatMemoryStore, chatService, chatHistoryService, chatId));
 
         var builder = new StringBuilder();
 
@@ -40,28 +44,42 @@ public final class PromptService {
                     logger.error("An Error occurred!", failure);
 
                     // Save in a single operation
-                    Unis.run(() -> chatHistoryService.create(chatId, prompt, "An Error occurred!"));
+                    Unis.run(() -> {
+                        var chat = chatService.get(chatId).orElseThrow();
+
+                        return chatHistoryService.create(chat, prompt, "An Error occurred!");
+                    });
                 })
                 .onCompletion().invoke(() -> {
                     logger.debug("Response: {}", builder);
 
                     // Save in a single operation
-                    Unis.run(() -> chatHistoryService.create(chatId, prompt, builder.toString()));
+                    Unis.run(() -> {
+                        var chat = chatService.get(chatId).orElseThrow();
+
+                        return chatHistoryService.create(chat, prompt, builder.toString());
+                    });
                 });
     }
 
-    private static Supplier<Object> createSupplier(ChatMemoryStore chatMemoryStore, ChatHistoryService chatHistoryService, String chatId) {
+    private static Supplier<Object> createSupplier(ChatMemoryStore chatMemoryStore, ChatService chatService, ChatHistoryService chatHistoryService, String chatId) {
         return () -> {
             var memoryStoreMessages = chatMemoryStore.getMessages(chatId);
             if (memoryStoreMessages.isEmpty()) {
 
-                memoryStoreMessages = chatHistoryService.get(chatId)
-                        .stream().flatMap(history ->
+                var chat = chatService.get(chatId).orElseThrow();
+
+                memoryStoreMessages = chatHistoryService
+                        .getRecent(chat, 0, 10)
+                        .data()
+                        .stream()
+                        .flatMap(history ->
                                 Stream.of(
                                         dev.langchain4j.data.message.UserMessage.from(history.getPrompt()),
                                         dev.langchain4j.data.message.AiMessage.from(history.getResponse())
                                 ))
-                        .toList();
+                        .toList()
+                        .reversed();
 
                 chatMemoryStore.updateMessages(chatId, memoryStoreMessages);
             }

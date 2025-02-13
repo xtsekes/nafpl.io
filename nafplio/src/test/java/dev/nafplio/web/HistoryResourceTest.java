@@ -3,20 +3,18 @@ package dev.nafplio.web;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
-//import static io.restassured.RestAssured.given;
+import java.util.UUID;
+
+import static io.restassured.RestAssured.given;
 
 @QuarkusTest
 class HistoryResourceTest {
-
-//    @Inject
-//    ChatHistoryService chatHistoryService;
-
     @Test
-    void testHelloEndpoint() {
-//        given()
-//                .pathParam("chatId", UUID.randomUUID().toString())
-//                .when().get("/chats/history/{chatId}")
-//                .then()
-//                .statusCode(200);
+    void get400_when_chat_is_invalid() {
+        given()
+                .pathParam("chatId", UUID.randomUUID().toString())
+                .when().get("/chats/history/{chatId}")
+                .then()
+                .statusCode(400);
     }
 }

@@ -18,7 +18,8 @@
 
     <modules>
         <module>projectScanner</module>
-        <module>nafplio</module>
+        <module>nafplio-domain</module>
         <module>nafplio-data</module>
+        <module>nafplio</module>
     </modules>
 </project>

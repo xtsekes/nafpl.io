@@ -1,7 +1,8 @@
 package dev.nafplio.web;
 
-import dev.nafplio.data.Chat;
-import dev.nafplio.data.ChatService;
+import dev.nafplio.domain.Chat;
+import dev.nafplio.domain.ChatService;
+import dev.nafplio.domain.PageResult;
 import dev.nafplio.projectScanner.ProjectScanner;
 import dev.nafplio.service.IngestService;
 import dev.nafplio.service.model.IngestModel;
@@ -18,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import java.util.Objects;
 
 @Path("/chats")
@@ -74,11 +74,30 @@ public class ChatResource {
 
     @GET
     @Path("/")
-    public List<ProjectView> list() {
-        return chatService.get()
-                .stream()
-                .map(this::toProjectView)
-                .toList();
+    public Response list(@QueryParam("pageSize") Integer pageSize, @QueryParam("pageNumber") Integer pageNumber) {
+        // set defaults
+        pageNumber = pageNumber != null ? pageNumber : 1;
+        pageSize = pageSize != null ? pageSize : 100;
+
+        // validate
+        if (pageNumber <= 0) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        if (pageSize <= 0) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
+
+        var chats = chatService.get((pageNumber - 1) * pageSize, pageSize);
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(PageResult.of(pageNumber, pageSize, chats.totalElements(), chats.data().stream().map(this::toProjectView).toList()))
+                .build();
     }
 
     @GET
@@ -92,7 +111,7 @@ public class ChatResource {
 
         return project.isPresent()
                 ? Response.status(Response.Status.OK).entity(toProjectView(project.get())).build()
-                : Response.status(Response.Status.NOT_FOUND).build();
+                : Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @POST
@@ -118,10 +137,11 @@ public class ChatResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        var projectEntity = new Chat();
-        projectEntity.setRootDirectory(createProjectPayload.rootDirectory());
-        projectEntity.setTitle(createProjectPayload.title());
-        projectEntity.setCreatedAt(LocalDateTime.now(ZoneOffset.UTC));
+        var projectEntity = Chat.builder()
+                .rootDirectory(createProjectPayload.rootDirectory())
+                .title(createProjectPayload.title())
+                .createdAt(LocalDateTime.now(ZoneOffset.UTC))
+                .build();
 
         try {
             ingestProject(ingestService, inputDirectory, createProjectPayload.title());

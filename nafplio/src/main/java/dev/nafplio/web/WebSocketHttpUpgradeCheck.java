@@ -1,7 +1,7 @@
 package dev.nafplio.web;
 
 import dev.nafplio.Unis;
-import dev.nafplio.data.ChatService;
+import dev.nafplio.domain.ChatService;
 import io.quarkus.arc.Arc;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.runtime.util.StringUtil;

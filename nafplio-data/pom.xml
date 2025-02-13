@@ -15,6 +15,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>dev.hackathon</groupId>
+            <artifactId>nafplio-domain</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <!-- Quarkus -->
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>

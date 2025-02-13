@@ -1,10 +1,9 @@
-package dev.nafplio.data;
+package dev.nafplio.domain;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ChatService {
-    List<Chat> get();
+    PageResult<Chat> get(int skip, int take);
 
     Optional<Chat> get(String id);
 
