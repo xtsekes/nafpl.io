@@ -1,6 +1,7 @@
 package dev.nafplio.data.implementation;
 
 import dev.nafplio.data.ChatHistory;
+import dev.nafplio.data.ChatHistoryService;
 import dev.nafplio.data.PageResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -10,7 +11,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @ApplicationScoped
-final class DefaultChatHistoryService implements dev.nafplio.data.ChatHistoryService {
+final class DefaultChatHistoryService implements ChatHistoryService {
     private final ChatHistoryRepository chatHistoryRepository;
 
     DefaultChatHistoryService(ChatHistoryRepository chatHistoryRepository) {
