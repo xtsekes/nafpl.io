@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 //import static io.restassured.RestAssured.given;
 
-//@QuarkusTest
+@QuarkusTest
 class HistoryResourceTest {
 
 //    @Inject
