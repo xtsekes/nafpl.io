@@ -1,13 +1,14 @@
 package dev.nafplio.web;
 
+import dev.nafplio.domain.PageResult;
+import dev.nafplio.domain.chat.ChatHistory;
 import dev.nafplio.domain.chat.ChatHistoryService;
 import dev.nafplio.domain.chat.ChatService;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.Response;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
 import lombok.AllArgsConstructor;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 @AllArgsConstructor
 @Path("/chats/history")
@@ -17,69 +18,35 @@ public class HistoryResource {
 
     @GET
     @Path("/{chatId}")
-    public Response list(@PathParam("chatId") String chatId, @QueryParam("pageSize") Integer pageSize, @QueryParam("pageNumber") Integer pageNumber) {
-        // set defaults
-        pageNumber = pageNumber != null ? pageNumber : 1;
-        pageSize = pageSize != null ? pageSize : 100;
-
-        // validate
-        if (pageNumber <= 0) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .build();
-        }
-
-        if (pageSize <= 0) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .build();
-        }
-
+    @APIResponses({
+            @APIResponse(responseCode = "200", description = "OK"),
+            @APIResponse(responseCode = "400", description = "Bad request"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
+    public PageResult<ChatHistory> list(@PathParam("chatId") String chatId, @Valid @BeanParam PageParameters pageParameters) {
         var chat = chatService.get(chatId);
 
         if (chat.isEmpty()) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .build();
+            throw new BadRequestException();
         }
 
-        return Response
-                .status(Response.Status.OK)
-                .entity(chatHistoryService.get(chat.get(), (pageNumber - 1) * pageSize, pageSize))
-                .build();
+        return chatHistoryService.get(chat.get(), (pageParameters.page - 1) * (int) pageParameters.pageSize, pageParameters.pageSize);
     }
 
     @GET
     @Path("/{chatId}/recent")
-    public Response recent(@PathParam("chatId") String chatId, @QueryParam("pageSize") Integer pageSize, @QueryParam("pageNumber") Integer pageNumber) {
-        // set defaults
-        pageNumber = pageNumber != null ? pageNumber : 1;
-        pageSize = pageSize != null ? pageSize : 100;
-
-        // validate
-        if (pageNumber <= 0) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .build();
-        }
-
-        if (pageSize <= 0) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .build();
-        }
-
+    @APIResponses({
+            @APIResponse(responseCode = "200", description = "OK"),
+            @APIResponse(responseCode = "400", description = "Bad request"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
+    public PageResult<ChatHistory> recent(@PathParam("chatId") String chatId, @Valid @BeanParam PageParameters pageParameters) {
         var chat = chatService.get(chatId);
 
         if (chat.isEmpty()) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .build();
+            throw new BadRequestException();
         }
 
-        return Response
-                .status(Response.Status.OK)
-                .entity(chatHistoryService.getRecent(chat.get(), (pageNumber - 1) * pageSize, pageSize))
-                .build();
+        return chatHistoryService.getRecent(chat.get(), (pageParameters.page - 1) * pageParameters.pageSize, pageParameters.pageSize);
     }
 }

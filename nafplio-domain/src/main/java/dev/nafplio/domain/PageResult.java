@@ -2,9 +2,9 @@ package dev.nafplio.domain;
 
 import java.util.List;
 
-public record PageResult<T>(int pageNumber, int pageSize, int totalPages, long totalElements, List<T> data) {
+public record PageResult<T>(int page, int pageSize, int totalPages, long totalElements, List<T> data) {
     public PageResult {
-        if (pageNumber < 0) {
+        if (page < 0) {
             throw new IllegalArgumentException("Page number cannot be negative");
         }
         if (pageSize <= 0) {

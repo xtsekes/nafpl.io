@@ -7,7 +7,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PageResultTest {
-
     @Test
     void testPageResult() {
         var page = 1;
@@ -17,7 +16,7 @@ class PageResultTest {
 
         var pageResult = new PageResult<>(page, pageSize, total / pageSize, total, data);
 
-        assertEquals(page, pageResult.pageNumber());
+        assertEquals(page, pageResult.page());
         assertEquals(pageSize, pageResult.pageSize());
         assertEquals(total / pageSize, pageResult.totalPages());
         assertEquals(total, pageResult.totalElements());

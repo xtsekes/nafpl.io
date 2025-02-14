@@ -101,7 +101,7 @@ class ChatHistoryServiceTest {
         var result = chatHistoryService.getRecent(chat, (page - 1) * pageSize, pageSize);
 
         assertNotNull(result);
-        assertEquals(page, result.pageNumber());
+        assertEquals(page, result.page());
         assertEquals(pageSize, result.pageSize());
         assertEquals(2, result.data().size());
 
