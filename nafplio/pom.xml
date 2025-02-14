@@ -12,6 +12,10 @@
 
     <artifactId>nafplio</artifactId>
 
+    <properties>
+        <quarkus-langchain4j.version>0.22.0</quarkus-langchain4j.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>dev.hackathon</groupId>
