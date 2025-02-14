@@ -64,6 +64,7 @@ final class ChatHistoryRepository implements PanacheRepository<ChatHistory>, Cha
 
     private static dev.nafplio.domain.chat.ChatHistory mapToDomain(ChatHistory entity) {
         return dev.nafplio.domain.chat.ChatHistory.builder()
+                .id(entity.getId().toString())
                 .chatId(entity.getChatId())
                 .prompt(entity.getPrompt())
                 .response(entity.getResponse())
