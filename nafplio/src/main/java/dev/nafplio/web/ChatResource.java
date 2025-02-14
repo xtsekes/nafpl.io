@@ -143,16 +143,16 @@ public class ChatResource {
             throw new BadRequestException();
         }
 
-        var projectEntity = Chat.builder()
-                .rootDirectory(createProjectPayload.rootDirectory())
-                .title(createProjectPayload.title())
-                .createdAt(LocalDateTime.now(ZoneOffset.UTC))
-                .build();
-
         try {
-            ingestProject(ingestService, inputDirectory, createProjectPayload.title());
+            var chat = chatService.create(Chat.builder()
+                    .rootDirectory(createProjectPayload.rootDirectory())
+                    .title(createProjectPayload.title())
+                    .createdAt(LocalDateTime.now(ZoneOffset.UTC))
+                    .build());
 
-            return chatService.create(projectEntity);
+            ingestProject(ingestService, inputDirectory, chat.getId());
+
+            return chat;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
