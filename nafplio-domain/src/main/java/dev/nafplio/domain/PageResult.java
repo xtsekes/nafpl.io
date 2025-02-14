@@ -19,7 +19,7 @@ public record PageResult<T>(int page, int pageSize, int totalPages, long totalEl
     }
 
     public static <T> PageResult<T> empty(int pageNumber, int pageSize) {
-        return new PageResult<>(pageNumber, pageSize, 0, 0, null);
+        return new PageResult<>(pageNumber, pageSize, 0, 0, List.of());
     }
 
     public static <T> PageResult<T> of(int pageNumber, int pageSize, long totalElements, List<T> data) {
