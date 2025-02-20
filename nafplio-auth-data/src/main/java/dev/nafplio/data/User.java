@@ -1,8 +1,6 @@
 package dev.nafplio.data;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -20,6 +18,7 @@ public class User implements dev.nafplio.auth.User<String> {
 
     @Email
     @NotNull
+    @Column(unique = true)
     private String email;
 
     @Email
