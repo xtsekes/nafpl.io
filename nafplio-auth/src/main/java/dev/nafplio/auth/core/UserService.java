@@ -2,6 +2,7 @@ package dev.nafplio.auth.core;
 
 import dev.nafplio.auth.*;
 import dev.nafplio.auth.impl.Users;
+import io.quarkus.runtime.util.StringUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -28,6 +29,10 @@ public abstract class UserService<TUser extends User<TKey>, TKey> {
     @Transactional
     public final TUser add(TUser user) {
         Objects.requireNonNull(user);
+
+        if(StringUtil.isNullOrEmpty(user.getEmail())) {
+            throw new IllegalArgumentException();
+        }
 
         if (user.getId() != null) {
             this.userStore.get(user.getId())
