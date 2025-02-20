@@ -3,16 +3,16 @@ package dev.nafplio.data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "roles")
-class Role {
+public class Role implements dev.nafplio.auth.Role<String> {
     @Id
     private String id;
 

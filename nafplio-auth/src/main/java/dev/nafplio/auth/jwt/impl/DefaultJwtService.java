@@ -1,46 +1,28 @@
-package dev.nafplio.http;
+package dev.nafplio.auth.jwt.impl;
 
+import dev.nafplio.auth.jwt.Claims;
+import dev.nafplio.auth.jwt.JwtService;
 import io.quarkus.runtime.util.StringUtil;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
-
-@Getter
-@Builder
-@AllArgsConstructor
-final class Claims {
-    private String issuer;
-    private String subject;
-    private String upn;
-    private String preferredUserName;
-    private Instant notBefore;
-    private Instant issuedAt;
-    private Instant expiresAt;
-    private Duration expiresIn;
-    private Set<String> groups;
-    private Set<String> scope;
-    private Set<String> audience;
-}
 
 @ApplicationScoped
 @AllArgsConstructor
-final class JwtService {
+final class DefaultJwtService implements JwtService {
     private final JwtServiceOptions options;
     private static final String[] SECRET_PREFIXES = new String[]{
-            JwtService.class.getCanonicalName()
+            DefaultJwtService.class.getCanonicalName()
     };
 
     public String generate(Claims claims, String... keys) {

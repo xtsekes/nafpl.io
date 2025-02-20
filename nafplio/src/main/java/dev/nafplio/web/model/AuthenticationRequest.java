@@ -1,4 +1,4 @@
-package dev.nafplio.http.model;
+package dev.nafplio.web.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

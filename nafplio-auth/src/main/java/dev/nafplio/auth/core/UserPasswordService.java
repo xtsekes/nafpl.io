@@ -1,22 +1,20 @@
-package dev.nafplio.auth.impl;
+package dev.nafplio.auth.core;
 
 import dev.nafplio.auth.*;
+import dev.nafplio.auth.impl.Users;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.runtime.util.StringUtil;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import java.util.Objects;
 
 @AllArgsConstructor
-@ApplicationScoped
-final class DefaultUserPasswordService implements UserPasswordService {
-    private final UserStore userStore;
-    private final UserPasswordStore userPasswordStore;
+public abstract class UserPasswordService<TUser extends User<TKey>,TKey> {
+    private final UserStore<TUser, TKey> userStore;
+    private final UserPasswordStore<TKey> userPasswordStore;
 
-    @Override
-    public boolean matches(User user, String password) {
+    public final boolean matches(TUser user, String password) {
         Objects.requireNonNull(user);
 
         var credentials = this.getCredentials(user);
@@ -26,8 +24,7 @@ final class DefaultUserPasswordService implements UserPasswordService {
         return BcryptUtil.matches(plainPassword, credentials.getPasswordHash());
     }
 
-    @Override
-    public UserCredentials getCredentials(User user) {
+    public final UserCredentials getCredentials(TUser user) {
         Objects.requireNonNull(user);
 
         var entity = this.userStore.get(user.getId())
@@ -38,7 +35,7 @@ final class DefaultUserPasswordService implements UserPasswordService {
     }
 
     @Transactional
-    public void setCredentials(User user, String password) {
+    public final void setCredentials(TUser user, String password) {
         Objects.requireNonNull(user);
         Objects.requireNonNull(password);
 

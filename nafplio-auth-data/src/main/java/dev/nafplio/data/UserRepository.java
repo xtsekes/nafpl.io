@@ -12,23 +12,23 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
-final class UserRepository implements PanacheRepositoryBase<User, String>, UserStore, UserPasswordStore {
+public final class UserRepository implements PanacheRepositoryBase<User, String>, UserStore<User, String>, UserPasswordStore<String> {
 
     @Override
-    public Optional<dev.nafplio.auth.User> get(String id) {
+    public Optional<User> get(String id) {
         return this.findByIdOptional(id)
                 .map(UserRepository::mapToDomain);
     }
 
     @Override
-    public Optional<dev.nafplio.auth.User> getByNormalizedEmail(String normalizedEmail) {
+    public Optional<User> getByNormalizedEmail(String normalizedEmail) {
         return this.find("normalizedEmail", normalizedEmail)
                 .firstResultOptional()
                 .map(UserRepository::mapToDomain);
     }
 
     @Override
-    public dev.nafplio.auth.User add(dev.nafplio.auth.User user) {
+    public User add(User user) {
         Objects.requireNonNull(user);
 
         var entity = mapToEntity(user);
@@ -43,7 +43,7 @@ final class UserRepository implements PanacheRepositoryBase<User, String>, UserS
     }
 
     @Override
-    public void update(dev.nafplio.auth.User user) {
+    public void update(User user) {
         var entity = this.findByIdOptional(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -54,7 +54,7 @@ final class UserRepository implements PanacheRepositoryBase<User, String>, UserS
     }
 
     @Override
-    public void delete(dev.nafplio.auth.User user) {
+    public void delete(User user) {
         var entity = this.findByIdOptional(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -81,15 +81,15 @@ final class UserRepository implements PanacheRepositoryBase<User, String>, UserS
         this.persist(entity);
     }
 
-    private static dev.nafplio.auth.User mapToDomain(User user) {
-        return dev.nafplio.auth.User.builder()
+    private static User mapToDomain(User user) {
+        return User.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .normalizedEmail(user.getNormalizedEmail())
                 .build();
     }
 
-    private static User mapToEntity(dev.nafplio.auth.User user) {
+    private static User mapToEntity(User user) {
         var entity = new User();
 
         entity.setId(user.getId());

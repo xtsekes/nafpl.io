@@ -2,7 +2,7 @@ package dev.nafplio.auth.impl;
 
 import java.time.Instant;
 
-class Users {
+public final class Users {
     public static String normalizeEmail(String email) {
         return email.toLowerCase();
     }

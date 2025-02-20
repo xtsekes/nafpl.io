@@ -2,14 +2,14 @@ package dev.nafplio.auth;
 
 import java.util.Optional;
 
-public interface UserStore {
-    Optional<User> get(String id);
+public interface UserStore<TUser extends User<TKey>, TKey> {
+    Optional<TUser> get(TKey id);
 
-    Optional<User> getByNormalizedEmail(String normalizedEmail);
+    Optional<TUser> getByNormalizedEmail(String normalizedEmail);
 
-    User add(User user);
+    TUser add(TUser user);
 
-    void update(User user);
+    void update(TUser user);
 
-    void delete(User user);
+    void delete(TUser user);
 }

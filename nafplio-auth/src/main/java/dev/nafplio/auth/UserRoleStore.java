@@ -2,10 +2,10 @@ package dev.nafplio.auth;
 
 import java.util.List;
 
-public interface UserRoleStore {
-    List<UserRole> getRolesForUser(User user);
+public interface UserRoleStore<TUserRole extends UserRole<TUserKey, TRoleKey>, TUser extends User<TUserKey>, TUserKey, TRoleKey> {
+    List<TUserRole> getRolesForUser(TUser user);
 
-    void addRoleToUser(UserRole userRole);
+    void addRoleToUser(TUserKey userId, TRoleKey roleId);
 
-    void removeRoleFromUser(UserRole userRole);
+    void removeRoleFromUser(TUserKey userId, TRoleKey roleId);
 }

@@ -1,4 +1,4 @@
-package dev.nafplio.http.model;
+package dev.nafplio.web.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

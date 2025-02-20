@@ -1,18 +1,15 @@
 package dev.nafplio.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+public interface Role<TKey> {
+    TKey getId();
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-public class Role {
-    private String id;
+    void setId(TKey id);
 
-    private String name;
+    String getName();
 
-    private String normalizedName;
+    void setName(String name);
+
+    String getNormalizedName();
+
+    void setNormalizedName(String normalizedName);
 }

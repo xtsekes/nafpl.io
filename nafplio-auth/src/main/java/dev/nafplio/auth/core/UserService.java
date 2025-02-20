@@ -1,8 +1,7 @@
-package dev.nafplio.auth.impl;
+package dev.nafplio.auth.core;
 
 import dev.nafplio.auth.*;
-import io.quarkus.runtime.util.StringUtil;
-import jakarta.enterprise.context.ApplicationScoped;
+import dev.nafplio.auth.impl.Users;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -10,32 +9,27 @@ import java.util.Objects;
 import java.util.Optional;
 
 @AllArgsConstructor
-@ApplicationScoped
-final class DefaultUserService implements UserService {
-    private final UserStore userStore;
-    private final UserPasswordStore userPasswordStore;
+public abstract class UserService<TUser extends User<TKey>, TKey> {
+    private final UserStore<TUser, TKey> userStore;
+    private final UserPasswordStore<TKey> userPasswordStore;
 
-    @Override
-    public Optional<User> get(String id) {
+    public final Optional<TUser> get(TKey id) {
         return this.userStore.get(id);
     }
 
-    @Override
-    public Optional<User> getByEmail(String email) {
+    public final Optional<TUser> getByEmail(String email) {
         return this.getByNormalizedEmail(Users.normalizeEmail(email));
     }
 
-    @Override
-    public Optional<User> getByNormalizedEmail(String normalizedEmail) {
+    public final Optional<TUser> getByNormalizedEmail(String normalizedEmail) {
         return this.userStore.getByNormalizedEmail(normalizedEmail);
     }
 
-    @Override
     @Transactional
-    public User add(User user) {
+    public final TUser add(TUser user) {
         Objects.requireNonNull(user);
 
-        if (!StringUtil.isNullOrEmpty(user.getId())) {
+        if (user.getId() != null) {
             this.userStore.get(user.getId())
                     .ifPresent(u -> {
                         throw new UserAlreadyExistsException();
@@ -45,9 +39,8 @@ final class DefaultUserService implements UserService {
         return this.userStore.add(user);
     }
 
-    @Override
     @Transactional
-    public void update(User user) {
+    public final void update(TUser user) {
         Objects.requireNonNull(user);
 
         this.userStore.get(user.getId())
@@ -56,9 +49,8 @@ final class DefaultUserService implements UserService {
         this.userStore.update(user);
     }
 
-    @Override
     @Transactional
-    public void delete(User user) {
+    public final void delete(TUser user) {
         Objects.requireNonNull(user);
 
         this.userStore.get(user.getId())
@@ -67,4 +59,3 @@ final class DefaultUserService implements UserService {
         this.userStore.delete(user);
     }
 }
-

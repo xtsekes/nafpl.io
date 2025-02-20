@@ -4,10 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,10 +16,12 @@ class UserRolePrimaryKey {
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @IdClass(UserRolePrimaryKey.class)
 @Table(name = "userroles")
-class UserRole {
+public class UserRole implements dev.nafplio.auth.UserRole<String, String> {
     @Id
     private String userId;
 

@@ -1,4 +1,4 @@
-package dev.nafplio.http.model;
+package dev.nafplio.web.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -11,13 +11,10 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-public class PasswordChangeRequest {
+public class RegistrationRequest {
     @Email
     @NotNull
     private String email;
-
-    @NotNull
-    private String oldPassword;
 
     @NotNull
     private String password;

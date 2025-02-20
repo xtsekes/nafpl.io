@@ -1,16 +1,15 @@
 package dev.nafplio.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+public interface User<TKey> {
+    TKey getId();
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-public class User {
-    private String id;
-    private String email;
-    private String normalizedEmail;
+    void setId(TKey id);
+
+    String getEmail();
+
+    void setEmail(String email);
+
+    String getNormalizedEmail();
+
+    void setNormalizedEmail(String normalizedEmail);
 }

@@ -2,8 +2,8 @@ package dev.nafplio.auth;
 
 import java.util.Optional;
 
-public interface UserPasswordStore {
-    Optional<UserCredentials> getCredentials(String id);
+public interface UserPasswordStore<TKey> {
+    Optional<UserCredentials> getCredentials(TKey id);
 
-    void setCredentials(String id, UserCredentials credentials);
+    void setCredentials(TKey id, UserCredentials credentials);
 }

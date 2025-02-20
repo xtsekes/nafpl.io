@@ -1,11 +1,8 @@
-package dev.nafplio.auth.impl;
+package dev.nafplio.auth.core;
 
-import dev.nafplio.auth.AuthenticationService;
 import dev.nafplio.auth.User;
-import dev.nafplio.auth.UserPasswordService;
-import dev.nafplio.auth.UserService;
+import dev.nafplio.auth.impl.Users;
 import io.quarkus.runtime.util.StringUtil;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -13,13 +10,11 @@ import java.security.InvalidParameterException;
 import java.util.Objects;
 
 @AllArgsConstructor
-@ApplicationScoped
-final class DefaultAuthenticationService implements AuthenticationService {
-    private final UserService userService;
-    private final UserPasswordService userPasswordService;
+public abstract class AuthenticationService<TUser extends User<TKey>, TKey> {
+    private final UserService<TUser, TKey> userService;
+    private final UserPasswordService<TUser, TKey> userPasswordService;
 
-    @Override
-    public boolean authenticate(String username, String password) {
+    public final boolean authenticate(String username, String password) {
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
 
@@ -32,20 +27,17 @@ final class DefaultAuthenticationService implements AuthenticationService {
                 .isPresent();
     }
 
-    @Override
     @Transactional
-    public User register(String username, String password) {
-        Objects.requireNonNull(username);
+    public final TUser register(TUser user, String password) {
+        Objects.requireNonNull(user);
         Objects.requireNonNull(password);
 
-        if (StringUtil.isNullOrEmpty(username)) {
+        if (StringUtil.isNullOrEmpty(user.getEmail()) || StringUtil.isNullOrEmpty(password)) {
             return null;
         }
 
-        var user = User.builder()
-                .email(username)
-                .normalizedEmail(Users.normalizeEmail(username))
-                .build();
+        user.setId(null);
+        user.setNormalizedEmail(Users.normalizeEmail(user.getEmail()));
 
         var result = this.userService.add(user);
 
@@ -54,8 +46,7 @@ final class DefaultAuthenticationService implements AuthenticationService {
         return result;
     }
 
-    @Override
-    public void changePassword(User user, String oldPassword, String password) {
+    public final void changePassword(TUser user, String oldPassword, String password) {
         Objects.requireNonNull(user);
         Objects.requireNonNull(oldPassword);
         Objects.requireNonNull(password);

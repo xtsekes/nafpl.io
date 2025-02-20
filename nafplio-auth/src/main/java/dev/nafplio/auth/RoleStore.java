@@ -2,14 +2,14 @@ package dev.nafplio.auth;
 
 import java.util.Optional;
 
-public interface RoleStore {
-    Optional<Role> get(String id);
+public interface RoleStore<TRole extends Role<TKey>, TKey> {
+    Optional<TRole> get(TKey id);
 
-    Optional<Role> getByNormalizedName(String normalizedName);
+    Optional<TRole> getByNormalizedName(String normalizedName);
 
-    Role add(Role role);
+    TRole add(TRole role);
 
-    void update(Role role);
+    void update(TRole role);
 
-    void delete(Role role);
+    void delete(TRole role);
 }
