@@ -20,6 +20,8 @@
         <module>projectScanner</module>
         <module>nafplio-domain</module>
         <module>nafplio-data</module>
+        <module>nafplio-auth</module>
+        <module>nafplio-auth-data</module>
         <module>nafplio</module>
     </modules>
 </project>

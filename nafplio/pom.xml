@@ -27,6 +27,16 @@
             <artifactId>nafplio-data</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>dev.hackathon</groupId>
+            <artifactId>nafplio-auth</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.hackathon</groupId>
+            <artifactId>nafplio-auth-data</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!-- Quarkus -->
         <dependency>
             <groupId>io.quarkus</groupId>
