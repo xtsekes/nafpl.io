@@ -9,6 +9,7 @@ import dev.nafplio.service.IngestService;
 import dev.nafplio.service.model.IngestModel;
 import dev.nafplio.web.model.CreateProjectPayload;
 import io.quarkus.hibernate.validator.runtime.jaxrs.ViolationReport;
+import io.quarkus.runtime.util.StringUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -100,7 +101,7 @@ public class ChatResource {
             @APIResponse(responseCode = "500", description = "Internal server error")
     })
     public Chat get(@PathParam("id") String id) {
-        if (id == null || id.isBlank()) {
+        if (StringUtil.isNullOrEmpty(id)) {
             throw new BadRequestException();
         }
 
@@ -168,7 +169,7 @@ public class ChatResource {
     })
     @Transactional
     public void delete(@PathParam("id") String id) {
-        if (id == null || id.isBlank()) {
+        if (StringUtil.isNullOrEmpty(id)) {
             throw new BadRequestException();
         }
 

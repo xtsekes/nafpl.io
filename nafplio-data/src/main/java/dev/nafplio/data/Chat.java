@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-final class Chat {
+class Chat {
     @Id
     private String id;
 

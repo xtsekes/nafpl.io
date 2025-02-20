@@ -26,6 +26,7 @@ public final class PromptService {
         Objects.requireNonNull(chatService);
         Objects.requireNonNull(aiService);
         Objects.requireNonNull(chatHistoryService);
+        Objects.requireNonNull(chatMemoryStore);
 
         this.aiService = aiService;
         this.chatService = chatService;

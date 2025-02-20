@@ -24,10 +24,9 @@ public final class ProjectScanner {
         Objects.requireNonNull(rootDirectory);
         Objects.requireNonNull(writer);
 
-        if (globalExclusion == null) {
-            globalExclusion = "";
-        }
-        globalExclusion = globalExclusion.trim();
+        globalExclusion = globalExclusion != null
+                ? globalExclusion.trim()
+                : "";
 
         var directory = new File(rootDirectory);
         if (!directory.exists() || !directory.isDirectory()) {
@@ -36,7 +35,7 @@ public final class ProjectScanner {
 
         var accessList = GitIgnoreAccessList.create(Paths.get(rootDirectory, ".gitignore"));
 
-        if (!globalExclusion.isBlank() && !globalExclusion.isEmpty()) {
+        if (!globalExclusion.isBlank()) {
             accessList = new GitIgnoreAccessListNode(
                     GitIgnoreAccessList.create(directory.toPath(), globalExclusion.lines().toList()),
                     accessList

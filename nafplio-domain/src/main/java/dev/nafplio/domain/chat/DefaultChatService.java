@@ -1,6 +1,7 @@
 package dev.nafplio.domain.chat;
 
 import dev.nafplio.domain.PageResult;
+import io.quarkus.runtime.util.StringUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 
@@ -32,7 +33,7 @@ final class DefaultChatService implements ChatService {
     public Chat create(Chat chat) {
         Objects.requireNonNull(chat, "Chat is required");
 
-        if (chat.getId() == null || chat.getId().isBlank()) {
+        if (StringUtil.isNullOrEmpty(chat.getId())) {
             chat.setId(java.util.UUID.randomUUID().toString());
         }
 
@@ -47,7 +48,7 @@ final class DefaultChatService implements ChatService {
     public void delete(Chat chat) {
         Objects.requireNonNull(chat, "Chat is required");
 
-        if (chat.getId() == null || chat.getId().isBlank()) {
+        if (StringUtil.isNullOrEmpty(chat.getId())) {
             throw new IllegalArgumentException("Chat ID is required");
         }
         chatStore.delete(chat);
