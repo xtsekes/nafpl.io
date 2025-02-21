@@ -1,10 +1,12 @@
-package dev.nafplio.web;
+package dev.nafplio.web.rest.model;
 
 import jakarta.validation.constraints.Min;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.QueryParam;
+import lombok.Data;
 
-public final class PageParameters {
+@Data
+public class PageParameters {
     @QueryParam("pagesize")
     @DefaultValue("100")
     @Min(value = 1, message = "pageSize must be greater than 0")

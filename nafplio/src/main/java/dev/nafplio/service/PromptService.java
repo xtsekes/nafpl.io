@@ -34,8 +34,8 @@ public final class PromptService {
         this.chatMemoryStore = chatMemoryStore;
     }
 
-    public Multi<String> chat(String chatId, String prompt) {
-        Unis.run(createSupplier(chatMemoryStore, chatService, chatHistoryService, chatId));
+    public Multi<String> chat(String userId, String chatId, String prompt) {
+        Unis.run(createSupplier(chatMemoryStore, chatService, chatHistoryService, userId, chatId));
 
         var builder = new StringBuilder();
 
@@ -46,7 +46,7 @@ public final class PromptService {
 
                     // Save in a single operation
                     Unis.run(() -> {
-                        var chat = chatService.get(chatId).orElseThrow();
+                        var chat = chatService.get(userId, chatId).orElseThrow();
 
                         return chatHistoryService.create(chat, prompt, "An Error occurred!");
                     });
@@ -56,19 +56,19 @@ public final class PromptService {
 
                     // Save in a single operation
                     Unis.run(() -> {
-                        var chat = chatService.get(chatId).orElseThrow();
+                        var chat = chatService.get(userId, chatId).orElseThrow();
 
                         return chatHistoryService.create(chat, prompt, builder.toString());
                     });
                 });
     }
 
-    private static Supplier<Object> createSupplier(ChatMemoryStore chatMemoryStore, ChatService chatService, ChatHistoryService chatHistoryService, String chatId) {
+    private static Supplier<Object> createSupplier(ChatMemoryStore chatMemoryStore, ChatService chatService, ChatHistoryService chatHistoryService, String userId, String chatId) {
         return () -> {
             var memoryStoreMessages = chatMemoryStore.getMessages(chatId);
             if (memoryStoreMessages.isEmpty()) {
 
-                var chat = chatService.get(chatId).orElseThrow();
+                var chat = chatService.get(userId, chatId).orElseThrow();
 
                 memoryStoreMessages = chatHistoryService
                         .getRecent(chat, 0, 10)

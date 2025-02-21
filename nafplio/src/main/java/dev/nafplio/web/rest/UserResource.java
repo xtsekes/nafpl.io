@@ -1,4 +1,4 @@
-package dev.nafplio.web;
+package dev.nafplio.web.rest;
 
 import dev.nafplio.auth.core.UserService;
 import dev.nafplio.data.User;

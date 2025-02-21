@@ -16,30 +16,32 @@ final class DefaultChatService implements ChatService {
     private final ChatStore chatStore;
 
     @Override
-    public PageResult<Chat> get(int skip, int take) {
+    public PageResult<Chat> get(String userId, int skip, int take) {
         if (skip < 0 || take <= 0) {
             throw new IllegalArgumentException("Skip must be non-negative and take must be positive");
         }
 
-        return chatStore.get(skip, take);
+        return chatStore.get(userId, skip, take);
     }
 
     @Override
-    public Optional<Chat> get(String id) {
-        return chatStore.get(id);
+    public Optional<Chat> get(String userId, String id) {
+        return chatStore.get(userId, id);
     }
 
     @Override
     public Chat create(Chat chat) {
         Objects.requireNonNull(chat, "Chat is required");
 
+        if (StringUtil.isNullOrEmpty(chat.getUserId())) {
+            throw new IllegalArgumentException("User ID is required");
+        }
+
         if (StringUtil.isNullOrEmpty(chat.getId())) {
             chat.setId(java.util.UUID.randomUUID().toString());
         }
 
-        if (chat.getCreatedAt() == null) {
-            chat.setCreatedAt(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()));
-        }
+        chat.setCreatedAt(LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId()));
 
         return chatStore.create(chat);
     }

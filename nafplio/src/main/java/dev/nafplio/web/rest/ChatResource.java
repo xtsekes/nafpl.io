@@ -1,4 +1,4 @@
-package dev.nafplio.web;
+package dev.nafplio.web.rest;
 
 import dev.nafplio.domain.PageResult;
 import dev.nafplio.domain.chat.Chat;
@@ -7,9 +7,12 @@ import dev.nafplio.domain.chat.ChatService;
 import dev.nafplio.projectScanner.ProjectScanner;
 import dev.nafplio.service.IngestService;
 import dev.nafplio.service.model.IngestModel;
+import dev.nafplio.web.UserResolver;
 import dev.nafplio.web.model.CreateProjectPayload;
+import dev.nafplio.web.rest.model.PageParameters;
 import io.quarkus.hibernate.validator.runtime.jaxrs.ViolationReport;
 import io.quarkus.runtime.util.StringUtil;
+import io.quarkus.security.Authenticated;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -30,6 +33,7 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 
 @Path("/chats")
+@Authenticated
 @AllArgsConstructor
 public class ChatResource {
     private static final String DEFAULT_EXCLUDES = """
@@ -75,6 +79,7 @@ public class ChatResource {
     private final ChatService chatService;
     private final ChatHistoryService chatHistoryService;
     private final IngestService ingestService;
+    private final UserResolver userResolver;
 
     @GET
     @Path("/")
@@ -87,9 +92,11 @@ public class ChatResource {
             @APIResponse(responseCode = "500", description = "Internal server error")
     })
     public PageResult<Chat> list(@Valid @BeanParam PageParameters pageParameters) {
-        var chats = chatService.get((pageParameters.page - 1) * pageParameters.pageSize, pageParameters.pageSize);
+        var user = userResolver.resolve().orElseThrow(BadRequestException::new);
 
-        return PageResult.of(pageParameters.page, pageParameters.pageSize, chats.totalElements(), chats.data());
+        var chats = chatService.get(user.getId(), (pageParameters.getPage() - 1) * pageParameters.getPageSize(), pageParameters.getPageSize());
+
+        return PageResult.of(pageParameters.getPage(), pageParameters.getPageSize(), chats.totalElements(), chats.data());
     }
 
     @GET
@@ -105,7 +112,9 @@ public class ChatResource {
             throw new BadRequestException();
         }
 
-        var project = chatService.get(id);
+        var user = userResolver.resolve().orElseThrow(BadRequestException::new);
+
+        var project = chatService.get(user.getId(), id);
 
         if (project.isEmpty()) {
             throw new BadRequestException();
@@ -138,7 +147,9 @@ public class ChatResource {
             throw new BadRequestException();
         }
 
-        var entity = chatService.get(createProjectPayload.title());
+        var user = userResolver.resolve().orElseThrow(BadRequestException::new);
+
+        var entity = chatService.get(user.getId(), createProjectPayload.title());
 
         if (entity.isPresent()) {
             throw new BadRequestException();
@@ -146,6 +157,7 @@ public class ChatResource {
 
         try {
             var chat = chatService.create(Chat.builder()
+                    .userId(user.getId())
                     .rootDirectory(createProjectPayload.rootDirectory())
                     .title(createProjectPayload.title())
                     .createdAt(LocalDateTime.now(ZoneOffset.UTC))
@@ -173,7 +185,9 @@ public class ChatResource {
             throw new BadRequestException();
         }
 
-        var entity = chatService.get(id);
+        var user = userResolver.resolve().orElseThrow(BadRequestException::new);
+
+        var entity = chatService.get(user.getId(), id);
 
         if (entity.isEmpty()) {
             throw new BadRequestException();

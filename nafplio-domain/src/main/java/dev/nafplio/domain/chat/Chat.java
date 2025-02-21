@@ -1,5 +1,6 @@
 package dev.nafplio.domain.chat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Chat {
     private String id;
+
+    @JsonIgnore
+    private transient String userId;
 
     private String rootDirectory;
 

@@ -1,4 +1,4 @@
-package dev.nafplio.web;
+package dev.nafplio.web.sockets;
 
 import dev.nafplio.useCases.ChatIdProvider;
 import io.quarkus.websockets.next.WebSocketConnection;

@@ -1,20 +1,17 @@
-package dev.nafplio.web;
+package dev.nafplio.web.rest;
 
-import dev.nafplio.auth.*;
 import dev.nafplio.auth.core.*;
 import dev.nafplio.auth.jwt.JwtService;
 import dev.nafplio.data.Role;
 import dev.nafplio.data.User;
-import dev.nafplio.data.UserRepository;
 import dev.nafplio.data.UserRole;
 import dev.nafplio.http.AuthenticationResourceBase;
 import dev.nafplio.web.model.AuthenticationRequest;
 import dev.nafplio.web.model.PasswordChangeRequest;
 import dev.nafplio.web.model.RegistrationRequest;
 import jakarta.annotation.security.PermitAll;
-import jakarta.enterprise.context.Dependent;
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;

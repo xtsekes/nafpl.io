@@ -1,5 +1,6 @@
 package dev.nafplio.data;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
@@ -15,6 +16,9 @@ import java.time.LocalDateTime;
 class Chat {
     @Id
     private String id;
+
+    @Column(nullable = false)
+    private String userId;
 
     private String rootDirectory;
 

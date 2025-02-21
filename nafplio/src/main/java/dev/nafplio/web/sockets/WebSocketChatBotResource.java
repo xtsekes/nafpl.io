@@ -1,10 +1,11 @@
-package dev.nafplio.web;
+package dev.nafplio.web.sockets;
 
 import dev.nafplio.Unis;
 import dev.nafplio.domain.chat.ChatHistoryService;
 import dev.nafplio.domain.chat.ChatService;
 import dev.nafplio.service.PromptService;
 import dev.nafplio.useCases.ChatIdProvider;
+import dev.nafplio.web.UserResolver;
 import dev.nafplio.web.model.ChatResponse;
 import dev.nafplio.web.model.ChatResponseType;
 import io.quarkus.websockets.next.OnOpen;
@@ -26,18 +27,21 @@ public class WebSocketChatBotResource {
     private final ChatHistoryService chatHistoryService;
     private final PromptService promptService;
     private final ChatIdProvider chatIdProvider;
+    private final UserResolver userResolver;
 
     @OnOpen
     public Multi<ChatResponse> onOpen() {
         var chatId = chatIdProvider.Resolve();
 
         var hasHistory = Unis.run(() -> {
-            var chat = chatService.get(chatId).orElseThrow();
+            var user = userResolver.resolve().orElseThrow();
+
+            var chat = chatService.get(user.getId(), chatId).orElseThrow();
 
             return chatHistoryService.getRecent(chat, 0, 1).totalElements() > 0;
         });
 
-        if(hasHistory) {
+        if (hasHistory) {
             return null;
         }
 
@@ -48,7 +52,11 @@ public class WebSocketChatBotResource {
 
     @OnTextMessage
     public Multi<ChatResponse> onMessage(String message) {
-        var response = promptService.chat(chatIdProvider.Resolve(), message).map(x -> new ChatResponse(ChatResponseType.DATA, x));
+        var userId = Unis.run(() -> {
+            return userResolver.resolve().orElseThrow().getId();
+        });
+
+        var response = promptService.chat(userId, chatIdProvider.Resolve(), message).map(x -> new ChatResponse(ChatResponseType.DATA, x));
 
         return createMultiResponse(response);
     }
