@@ -5,7 +5,7 @@ import dev.nafplio.data.User;
 import jakarta.enterprise.context.Dependent;
 
 @Dependent
-final class DefaultUserService extends UserService<User, String> {
+public final class DefaultUserService extends UserService<User, String> {
     public DefaultUserService(UserStore<User, String> userStore, UserPasswordStore<String> userPasswordStore) {
         super(userStore, userPasswordStore);
     }

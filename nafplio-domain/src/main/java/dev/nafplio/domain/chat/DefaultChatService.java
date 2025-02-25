@@ -53,6 +53,7 @@ final class DefaultChatService implements ChatService {
         if (StringUtil.isNullOrEmpty(chat.getId())) {
             throw new IllegalArgumentException("Chat ID is required");
         }
+        
         chatStore.delete(chat);
     }
 }

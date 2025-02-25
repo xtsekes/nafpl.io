@@ -13,19 +13,19 @@ class ChatServiceTest {
 
     @BeforeEach
     void setup() {
-        chatService.create(Chat.builder().id("1").title("Title").rootDirectory("Root").build());
-        chatService.create(Chat.builder().id("2").title("Title 2").rootDirectory("Root 2").build());
+        chatService.create(Chat.builder().id("1").userId("1").title("Title").rootDirectory("Root").build());
+        chatService.create(Chat.builder().id("2").userId("1").title("Title 2").rootDirectory("Root 2").build());
     }
 
     @AfterEach
     void cleanup() {
-        chatService.delete(Chat.builder().id("1").build());
-        chatService.delete(Chat.builder().id("2").build());
+        chatService.delete(Chat.builder().id("1").userId("1").build());
+        chatService.delete(Chat.builder().id("2").userId("1").build());
     }
 
     @Test
     void listAllChats() {
-        var result = chatService.get(0, 10);
+        var result = chatService.get("1", 0, 10);
 
         assertNotNull(result);
         assertEquals(2, result.totalElements());
@@ -35,7 +35,7 @@ class ChatServiceTest {
 
     @Test
     void getById() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
 
         assertNotNull(chat);
         assertEquals("1", chat.getId());
@@ -44,6 +44,7 @@ class ChatServiceTest {
     @Test
     void createChat() {
         var createdChat = chatService.create(Chat.builder()
+                .userId("1")
                 .title("New Chat")
                 .rootDirectory("New Root")
                 .build());
@@ -60,6 +61,7 @@ class ChatServiceTest {
     void whenIdIsBlank_createChat() {
         var createdChat = chatService.create(Chat.builder()
                 .id("")
+                .userId("1")
                 .title("New Chat")
                 .rootDirectory("New Root")
                 .build());
@@ -77,6 +79,7 @@ class ChatServiceTest {
     void whenIdIsGiven_createChat() {
         var createdChat = chatService.create(Chat.builder()
                 .id("3")
+                .userId("1")
                 .title("New Chat")
                 .rootDirectory("New Root")
                 .build());

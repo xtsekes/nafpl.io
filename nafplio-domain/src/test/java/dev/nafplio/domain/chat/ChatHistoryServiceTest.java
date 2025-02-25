@@ -21,8 +21,8 @@ class ChatHistoryServiceTest {
 
     @BeforeEach
     void setup() {
-        chatService.create(Chat.builder().id("1").title("Title").rootDirectory("Root").build());
-        chatService.create(Chat.builder().id("2").title("Title 2").rootDirectory("Root 2").build());
+        chatService.create(Chat.builder().id("1").userId("1").title("Title").rootDirectory("Root").build());
+        chatService.create(Chat.builder().id("2").userId("1").title("Title 2").rootDirectory("Root 2").build());
 
         var seedData = List.of(
                 ChatHistory.builder()
@@ -50,7 +50,7 @@ class ChatHistoryServiceTest {
 
         for (var seedDatum : seedData) {
             chatHistoryService.create(
-                    chatService.get(seedDatum.getChatId()).orElseThrow(),
+                    chatService.get("1", seedDatum.getChatId()).orElseThrow(),
                     seedDatum.getPrompt(),
                     seedDatum.getResponse()
             );
@@ -59,8 +59,8 @@ class ChatHistoryServiceTest {
 
     @AfterEach
     void cleanup() {
-        chatService.delete(Chat.builder().id("1").build());
-        chatService.delete(Chat.builder().id("2").build());
+        chatService.delete(Chat.builder().id("1").userId("1").build());
+        chatService.delete(Chat.builder().id("2").userId("1").build());
 
         chatHistoryService.delete(Chat.builder().id("1").build());
         chatHistoryService.delete(Chat.builder().id("2").build());
@@ -68,7 +68,7 @@ class ChatHistoryServiceTest {
 
     @Test
     void givenChatId_getHistory() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
         var chatHistory = chatHistoryService.get(chat, 0, 100);
 
         assertNotNull(chatHistory);
@@ -97,7 +97,7 @@ class ChatHistoryServiceTest {
         var pageSize = 2;
         var page = 1;
 
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
         var result = chatHistoryService.getRecent(chat, (page - 1) * pageSize, pageSize);
 
         assertNotNull(result);
@@ -111,7 +111,7 @@ class ChatHistoryServiceTest {
 
     @Test
     void whenSkipIsNegative_getHistory() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -120,7 +120,7 @@ class ChatHistoryServiceTest {
 
     @Test
     void whenTakeIsNegative_getHistory() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -129,7 +129,7 @@ class ChatHistoryServiceTest {
 
     @Test
     void whenSkipIsNegative_getRecentHistory() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -138,7 +138,7 @@ class ChatHistoryServiceTest {
 
     @Test
     void whenTakeIsNegative_getRecentHistory() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -148,7 +148,7 @@ class ChatHistoryServiceTest {
 
     @Test
     void whenTakeIsZero_getRecentHistory() {
-        var chat = chatService.get("1").orElseThrow();
+        var chat = chatService.get("1", "1").orElseThrow();
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -166,7 +166,7 @@ class ChatHistoryServiceTest {
 
     @Test
     void createChatHistory() {
-        var chat = chatService.get("2").orElseThrow();
+        var chat = chatService.get("1", "2").orElseThrow();
         var createdChatHistory = chatHistoryService.create(chat, "New Prompt", "New Message");
 
         assertNotNull(createdChatHistory);
