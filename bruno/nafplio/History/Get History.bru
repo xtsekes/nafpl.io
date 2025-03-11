@@ -1,0 +1,15 @@
+meta {
+  name: Get History
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/chats/history/:chatId
+  body: none
+  auth: none
+}
+
+params:path {
+  chatId: coffee-app-api
+}

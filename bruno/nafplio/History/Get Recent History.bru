@@ -1,0 +1,20 @@
+meta {
+  name: Get Recent History
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/chats/history/:chatId/recent
+  body: none
+  auth: none
+}
+
+params:query {
+  ~pageSize: 10
+  ~pageNumber: 0
+}
+
+params:path {
+  chatId: coffee-app-api
+}
